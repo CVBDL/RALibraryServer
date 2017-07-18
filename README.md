@@ -2,7 +2,8 @@
 
 ## FAQ
 
-1. It shows "Cannot attach the file *.mdf as database" error.
+- It shows "Cannot attach the file *.mdf as database" error.
+
   1. Open SQL Server Object Explorer
   1. Click refresh button.
   1. Expand (localdb)\MSSQLLocalDB(SQL Server 12.x.xxxxx - xxxxx\xxxx)
