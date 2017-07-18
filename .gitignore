@@ -1,0 +1,9 @@
+*.suo
+.vs/
+obj/
+bin/
+packages/
+ralibrary.csproj.user
+ralibrary/App_Data/
+ralibrary/Migrations/*
+!ralibrary/Migrations/Configuration.cs
