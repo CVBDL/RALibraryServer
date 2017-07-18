@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mailparams>
+  <senderName>ralibrary@163.com</senderName>
+  <senderPassword>rockwell123</senderPassword>
+  <smtpServer>smtp.163.com</smtpServer>
+  <subjectTemplate>Return Book Reminder!</subjectTemplate>
+  <bodyTemplate>
+    Hello {0},
+    
+    Please return the book ASAP!
+    
+    Regards
+  </bodyTemplate>
+</mailparams>

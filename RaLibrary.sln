@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaLibrary", "RaLibrary\RaLi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaLibrary.Tests", "RaLibrary.Tests\RaLibrary.Tests.csproj", "{6256D2E6-8D1C-4444-AB53-01B140046580}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaLibrary.Email", "RaLibrary.Email\RaLibrary.Email.csproj", "{4C2ED55B-2C38-4303-8C71-42BA51D06C2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{6256D2E6-8D1C-4444-AB53-01B140046580}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6256D2E6-8D1C-4444-AB53-01B140046580}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6256D2E6-8D1C-4444-AB53-01B140046580}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C2ED55B-2C38-4303-8C71-42BA51D06C2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C2ED55B-2C38-4303-8C71-42BA51D06C2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C2ED55B-2C38-4303-8C71-42BA51D06C2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C2ED55B-2C38-4303-8C71-42BA51D06C2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
