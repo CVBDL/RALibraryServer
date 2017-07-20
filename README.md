@@ -11,12 +11,11 @@
 ## FAQ
 
 1. It shows *"Cannot attach the file *.mdf as database"* error.
-
-  * Open SQL Server Object Explorer
-  * Click refresh button.
-  * Expand (localdb)\MSSQLLocalDB(SQL Server 12.x.xxxxx - xxxxx\xxxx)
-  * Expand Database
-  * Please remove existed same name database
-  * Click right button and then delete
-  * Go back to your Package Manage Console
-  * Update-Database
+    * Open SQL Server Object Explorer
+    * Click refresh button.
+    * Expand (localdb)\MSSQLLocalDB(SQL Server 12.x.xxxxx - xxxxx\xxxx)
+    * Expand Database
+    * Please remove existed same name database
+    * Click right button and then delete
+    * Go back to your Package Manage Console
+    * Update-Database
