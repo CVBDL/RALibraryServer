@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26403.3
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaLibrary", "RaLibrary\RaLibrary.csproj", "{69FDFFD9-9163-400D-BE8A-364808A0C9CE}"
 EndProject
@@ -10,8 +10,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaLibrary.Email", "RaLibrary.Email\RaLibrary.Email.csproj", "{4C2ED55B-2C38-4303-8C71-42BA51D06C2D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAAuthentication", "RAAuthentication\RAAuthentication.csproj", "{784AFF57-A270-4544-B6C0-3A6B75CC8495}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWebApplicaiton", "TestWebApplicaiton\TestWebApplicaiton.csproj", "{F1B14A03-6A96-4DBB-B7D9-94CC3BD340AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +33,6 @@ Global
 		{784AFF57-A270-4544-B6C0-3A6B75CC8495}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{784AFF57-A270-4544-B6C0-3A6B75CC8495}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{784AFF57-A270-4544-B6C0-3A6B75CC8495}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F1B14A03-6A96-4DBB-B7D9-94CC3BD340AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F1B14A03-6A96-4DBB-B7D9-94CC3BD340AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F1B14A03-6A96-4DBB-B7D9-94CC3BD340AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F1B14A03-6A96-4DBB-B7D9-94CC3BD340AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
