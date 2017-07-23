@@ -21,9 +21,16 @@ namespace RaLibrary.Controllers
         /// <summary>
         /// Get an access token.
         /// </summary>
+        /// <returns></returns>
         [Route("")]
         [HttpPost]
-        public void GetAccessToken() { }
+        public AuthorizationDTO GetAccessToken() {
+            return new AuthorizationDTO
+            {
+                AccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ",
+                IsAdmin = true
+            };
+        }
 
         /// <summary>
         /// Get user details.
