@@ -11,14 +11,15 @@ namespace RaLibrary
         {
             // Web API configuration and services
 
-            // Web API routes
-            config.MapHttpAttributeRoutes();
+            // Only responses JSON format.
+            // <https://docs.microsoft.com/en-us/aspnet/web-api/overview/formats-and-model-binding/json-and-xml-serialization#removing_the_json_or_xml_formatter>
+            config.Formatters.Remove(config.Formatters.XmlFormatter);
 
-            config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-            );
+            // Web API routes:
+            // - api/user : UserController
+            // - api/books : BooksController
+            config.MapHttpAttributeRoutes();
+            
         }
     }
 }

@@ -7,7 +7,7 @@ namespace RaLibrary.Models
         public int Id { get; set; }
 
         [Required]
-        public string CustomId { get; set; }
+        public string Code { get; set; }
 
         [Required]
         public string Title { get; set; }

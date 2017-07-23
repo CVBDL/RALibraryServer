@@ -9,17 +9,20 @@ using RaLibrary.Models;
 
 namespace RaLibrary.Controllers
 {
+    [RoutePrefix("api/books")]
     public class BooksController : ApiController
     {
         private RaLibraryContext db = new RaLibraryContext();
-
-        // GET: api/Books
-        public IQueryable<Book> GetBooks()
+        
+        [Route("")]
+        [HttpGet]
+        public IQueryable<Book> ListBooks()
         {
             return db.Books;
         }
-
-        // GET: api/Books/5
+        
+        [Route("{id:int}")]
+        [HttpGet]
         [ResponseType(typeof(Book))]
         public async Task<IHttpActionResult> GetBook(int id)
         {
@@ -31,10 +34,11 @@ namespace RaLibrary.Controllers
 
             return Ok(book);
         }
-
-        // PUT: api/Books/5
+        
+        [Route("{id:int}")]
+        [HttpPost]
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutBook(int id, Book book)
+        public async Task<IHttpActionResult> UpdateBook(int id, Book book)
         {
             if (!ModelState.IsValid)
             {
@@ -67,9 +71,10 @@ namespace RaLibrary.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Books
+        [Route("", Name = "CreateBook")]
+        [HttpPost]
         [ResponseType(typeof(Book))]
-        public async Task<IHttpActionResult> PostBook(Book book)
+        public async Task<IHttpActionResult> CreateBook(Book book)
         {
             if (!ModelState.IsValid)
             {
@@ -79,10 +84,11 @@ namespace RaLibrary.Controllers
             db.Books.Add(book);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = book.Id }, book);
+            return CreatedAtRoute("CreateBook", new { id = book.Id }, book);
         }
 
-        // DELETE: api/Books/5
+        [Route("{id:int}")]
+        [HttpDelete]
         [ResponseType(typeof(Book))]
         public async Task<IHttpActionResult> DeleteBook(int id)
         {

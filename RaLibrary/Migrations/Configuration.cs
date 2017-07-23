@@ -31,19 +31,19 @@ namespace RaLibrary.Migrations
                 new Book()
                 {
                     Id = 1,
-                    CustomId = "P001",
+                    Code = "P001",
                     Title = "Python Programming For Beginners"
                 },
                 new Book()
                 {
                     Id = 2,
-                    CustomId = "P002",
+                    Code = "P002",
                     Title = "Java: The Ultimate Beginners Guide to Java Programming"
                 },
                 new Book()
                 {
                     Id = 3,
-                    CustomId = "P003",
+                    Code = "P003",
                     Title = "C#: Become A Master In C#"
                 }
             );
