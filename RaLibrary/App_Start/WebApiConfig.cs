@@ -18,6 +18,7 @@ namespace RaLibrary
             // Web API routes:
             // - api/user : UserController
             // - api/books : BooksController
+            // <https://github.com/CVBDL/RALibraryDocs/blob/master/rest-api.md>
             config.MapHttpAttributeRoutes();
             
         }

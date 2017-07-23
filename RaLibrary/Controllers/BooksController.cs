@@ -9,11 +9,18 @@ using RaLibrary.Models;
 
 namespace RaLibrary.Controllers
 {
+    /// <summary>
+    /// Books routes.
+    /// </summary>
     [RoutePrefix("api/books")]
     public class BooksController : ApiController
     {
         private RaLibraryContext db = new RaLibraryContext();
-        
+
+        /// <summary>
+        /// List all books.
+        /// </summary>
+        /// <returns></returns>
         [Route("")]
         [HttpGet]
         public IQueryable<Book> ListBooks()
@@ -21,6 +28,11 @@ namespace RaLibrary.Controllers
             return db.Books;
         }
         
+        /// <summary>
+        /// Get a book.
+        /// </summary>
+        /// <param name="id">The book's id.</param>
+        /// <returns></returns>
         [Route("{id:int}")]
         [HttpGet]
         [ResponseType(typeof(Book))]
@@ -34,7 +46,13 @@ namespace RaLibrary.Controllers
 
             return Ok(book);
         }
-        
+
+        /// <summary>
+        /// Update a single book.
+        /// </summary>
+        /// <param name="id">The book's id.</param>
+        /// <param name="book">The updated book.</param>
+        /// <returns></returns>
         [Route("{id:int}")]
         [HttpPost]
         [ResponseType(typeof(void))]
@@ -71,6 +89,11 @@ namespace RaLibrary.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        /// <summary>
+        /// Create a book.
+        /// </summary>
+        /// <param name="book">The new book.</param>
+        /// <returns></returns>
         [Route("", Name = "CreateBook")]
         [HttpPost]
         [ResponseType(typeof(Book))]
@@ -87,6 +110,11 @@ namespace RaLibrary.Controllers
             return CreatedAtRoute("CreateBook", new { id = book.Id }, book);
         }
 
+        /// <summary>
+        /// Delete a book.
+        /// </summary>
+        /// <param name="id">The book's id.</param>
+        /// <returns></returns>
         [Route("{id:int}")]
         [HttpDelete]
         [ResponseType(typeof(Book))]

@@ -9,26 +9,51 @@ using RaLibrary.Models;
 
 namespace RaLibrary.Controllers
 {
+    /// <summary>
+    /// User routes.
+    /// <https://github.com/CVBDL/RALibraryDocs/blob/master/rest-api.md#users>
+    /// </summary>
     [RoutePrefix("api/user")]
     public class UserController : ApiController
     {
         private RaLibraryContext db = new RaLibraryContext();
 
+        /// <summary>
+        /// Get an access token.
+        /// </summary>
         [Route("")]
         [HttpPost]
         public void GetAccessToken() { }
 
+        /// <summary>
+        /// Get user details.
+        /// </summary>
         [Route("details")]
         [HttpPost]
         public void GetUserDetails() { }
 
+        /// <summary>
+        /// List the authenticated user borrowed books.
+        /// </summary>
         [Route("books")]
         [HttpGet]
         public void ListBorrowedBooks() { }
 
+        /// <summary>
+        /// Borrow a book for the authenticated user.
+        /// </summary>
+        /// <param name="book">The borrowed book.</param>
+        [Route("books")]
+        [HttpPost]
+        public void BorrowBook(Book book) { }
+
+        /// <summary>
+        /// Return a book for the authenticated user.
+        /// </summary>
+        /// <param name="id">The book's id.</param>
         [Route("books/{id:int}")]
         [HttpDelete]
-        public void ReturnBorrowedBook(int id) { }
+        public void ReturnBook(int id) {}
 
         protected override void Dispose(bool disposing)
         {
