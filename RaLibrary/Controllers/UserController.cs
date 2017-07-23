@@ -24,7 +24,10 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("")]
         [HttpPost]
-        public AuthorizationDTO GetAccessToken() {
+        public AuthorizationDTO GetAccessToken(CredentialDTO credential) {
+            string userName = credential.UserName;
+            string password = credential.Password;
+
             return new AuthorizationDTO
             {
                 AccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ",

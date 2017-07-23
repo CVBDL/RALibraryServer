@@ -96,6 +96,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AuthorizationDTO.cs" />
     <Compile Include="Models\Book.cs" />
+    <Compile Include="Models\CredentialDTO.cs" />
     <Compile Include="Models\RaLibraryContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
