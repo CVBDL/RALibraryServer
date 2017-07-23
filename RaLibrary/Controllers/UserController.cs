@@ -38,9 +38,20 @@ namespace RaLibrary.Controllers
         /// <summary>
         /// Get user details.
         /// </summary>
+        /// <returns></returns>
         [Route("details")]
         [HttpPost]
-        public void GetUserDetails() { }
+        public UserDetailsDTO GetUserDetails(CredentialDTO credential)
+        {
+            string userName = credential.UserName;
+            string password = credential.Password;
+
+            return new UserDetailsDTO
+            {
+                DisplayName = "Patrick Zhong",
+                EmailAddress = "patrick.zhong@example.com"
+            };
+        }
 
         /// <summary>
         /// List the authenticated user borrowed books.

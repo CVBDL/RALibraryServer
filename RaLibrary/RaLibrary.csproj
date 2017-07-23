@@ -98,6 +98,7 @@
     <Compile Include="Models\Book.cs" />
     <Compile Include="Models\CredentialDTO.cs" />
     <Compile Include="Models\RaLibraryContext.cs" />
+    <Compile Include="Models\UserDetailsDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
