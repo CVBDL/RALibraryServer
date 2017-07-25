@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using RaLibrary.Models;
+using RaLibrary.Utils;
 
 namespace RaLibrary.Controllers
 {
@@ -26,6 +27,17 @@ namespace RaLibrary.Controllers
         [HttpGet]
         public UserDetailsDTO GetUserDetails()
         {
+            Jwt jwt = Jwt.GetJwtFromRequestHeader(Request);
+            if (jwt != null)
+            {
+                JwtPayload jwtPayload = jwt.Payload;
+
+                if (jwtPayload != null)
+                {
+                    string Email = jwtPayload.Email;
+                }
+            }
+
             return new UserDetailsDTO
             {
                 IsAdmin = false

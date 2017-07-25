@@ -98,6 +98,8 @@
     <Compile Include="Models\RaLibraryContext.cs" />
     <Compile Include="Models\UserDetailsDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\Jwt.cs" />
+    <Compile Include="Utils\JwtPayload.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
