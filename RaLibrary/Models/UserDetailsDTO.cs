@@ -2,7 +2,6 @@
 {
     public class UserDetailsDTO
     {
-        public string DisplayName { get; set; }
-        public string EmailAddress { get; set; }
+        public bool IsAdmin { get; set; }
     }
 }

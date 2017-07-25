@@ -17,39 +17,18 @@ namespace RaLibrary.Controllers
     public class UserController : ApiController
     {
         private RaLibraryContext db = new RaLibraryContext();
-
-        /// <summary>
-        /// Get an access token.
-        /// </summary>
-        /// <returns></returns>
-        [Route("")]
-        [HttpPost]
-        public AuthorizationDTO GetAccessToken(CredentialDTO credential) {
-            string userName = credential.UserName;
-            string password = credential.Password;
-
-            return new AuthorizationDTO
-            {
-                AccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0ODMyMDAwMDAwMDAsImVtYWlsIjoicGF0cmljay56aG9uZ0BleGFtcGxlLmNvbSJ9.jIBK2wO6qtoAdT4v5bGaPP_ytZfIMqW_4Ofh9UTLqj4",
-                IsAdmin = true
-            };
-        }
-
+        
         /// <summary>
         /// Get user details.
         /// </summary>
         /// <returns></returns>
         [Route("details")]
-        [HttpPost]
-        public UserDetailsDTO GetUserDetails(CredentialDTO credential)
+        [HttpGet]
+        public UserDetailsDTO GetUserDetails()
         {
-            string userName = credential.UserName;
-            string password = credential.Password;
-
             return new UserDetailsDTO
             {
-                DisplayName = "Patrick Zhong",
-                EmailAddress = "patrick.zhong@example.com"
+                IsAdmin = false
             };
         }
 
