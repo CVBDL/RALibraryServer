@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Mail;
 using System.Net;
+using System.Text;
 
 namespace RaLibrary.Email
 {
@@ -28,7 +29,7 @@ namespace RaLibrary.Email
                 throw new ArgumentNullException("email entity can't be null");
 
             var config = EmailConfig.Instance;
-            var client = new SmtpClient(config.SmtpServer)
+            var client = new SmtpClient(config.SmtpServer, 25)
             {
                 Credentials = new NetworkCredential(config.SenderName, config.SenderPassword)
             };
@@ -37,11 +38,14 @@ namespace RaLibrary.Email
             {
                 From = new MailAddress(config.SenderName),
                 Subject = entity.Subject,
-                Body = entity.Body
+                SubjectEncoding = Encoding.UTF8,
+                Body = entity.Body,
+                BodyEncoding = Encoding.UTF8,
             };
 
-            entity.To.ForEach(i => mail.To.Add(i + ";"));
-            entity.Cc.ForEach(i => mail.CC.Add(i + ";"));
+
+            entity.To.ForEach(i => mail.To.Add(i));
+            entity.Cc.ForEach(i => mail.CC.Add(i));
 
             client.Send(mail);
         }

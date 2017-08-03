@@ -7,14 +7,12 @@ namespace RALibrary.Tests
     public class RaLibraryEmailTest
     {
         [TestMethod]
+        [Ignore]
         public void RalibraryEmailTest_Send_Success()
         {
             var entity = new EmailEntity();
-            //entity.To.Add("test@***.com");
-            //entity.Cc.Add("test@***.com");
             entity.Subject = EmailConfig.Instance.SubjectTemplate;
-            entity.Body = EmailConfig.Instance.BodyTemplate;
-
+            entity.Body = string.Format(EmailConfig.Instance.BodyTemplate, "Colleague");
             EmailAgent.Instance.Send(entity);
         }
     }
