@@ -19,7 +19,8 @@ namespace RaLibrary.Models
         {
         }
 
-        public System.Data.Entity.DbSet<RaLibrary.Models.Book> Books { get; set; }
-    
+        public DbSet<Book> Books { get; set; }
+        public DbSet<BorrowLog> BorrowLogs { get; set; }
+
     }
 }

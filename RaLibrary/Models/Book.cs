@@ -11,5 +11,7 @@ namespace RaLibrary.Models
 
         [Required]
         public string Title { get; set; }
+
+        public string Borrower { get; set; }
     }
 }
