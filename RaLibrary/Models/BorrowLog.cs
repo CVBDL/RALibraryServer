@@ -16,9 +16,12 @@ namespace RaLibrary.Models
         public virtual Book Book { get; set; }
 
         [Required]
+        [MaxLength(50)]
         public string Borrower { get; set; }
 
         [Required]
         public DateTime BorrowTime { get; set; }
+
+        public DateTime ReturnTime { get; set; }
     }
 }
