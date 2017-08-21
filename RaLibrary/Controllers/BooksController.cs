@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using RaLibrary.Models;
+using RaLibrary.Filters;
 
 namespace RaLibrary.Controllers
 {
@@ -23,6 +24,7 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("")]
         [HttpGet]
+        [RAAuthenticationAttribute]
         public IQueryable<Book> ListBooks()
         {
             return db.Books;

@@ -71,6 +71,11 @@ namespace RaLibrary.Utils
                 try
                 {
                     var payloadBase64String = jwt.Split(JWT_SEPARATOR)[1];
+                    int mod4 = payloadBase64String.Length % 4;
+                    if (mod4 > 0)
+                    {
+                        payloadBase64String += new string('=', 4 - mod4);
+                    }
                     var payloadJsonByte = Convert.FromBase64String(payloadBase64String);
                     var payloadJsonString = Encoding.UTF8.GetString(payloadJsonByte);
 
