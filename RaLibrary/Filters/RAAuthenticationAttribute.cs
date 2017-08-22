@@ -2,6 +2,7 @@
 using RaLibrary.Utils;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -51,7 +52,8 @@ namespace RaLibrary.Filters
 
             var content = new FormUrlEncodedContent(values);
 
-            var response = await httpClient.PostAsync("https://apcndaekbhost.ra-int.com/raauthentication/api/token/validate", content);
+            var tokenValidationEndpoint = ConfigurationManager.AppSettings.Get("TokenValidationEndpoint");
+            var response = await httpClient.PostAsync(tokenValidationEndpoint, content);
 
             string strEmail = null, strName = null;
             if (response.StatusCode == HttpStatusCode.NoContent) // succeeded

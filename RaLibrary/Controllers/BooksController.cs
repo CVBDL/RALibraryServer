@@ -7,6 +7,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using RaLibrary.Models;
 using RaLibrary.Filters;
+using System.Security.Claims;
 
 namespace RaLibrary.Controllers
 {
@@ -24,9 +25,12 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("")]
         [HttpGet]
-        [RAAuthenticationAttribute]
+        [RAAuthentication]
         public IQueryable<Book> ListBooks()
         {
+            ClaimsIdentity identity = User.Identity as ClaimsIdentity;
+            string email = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+
             return db.Books;
         }
         
