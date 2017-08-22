@@ -100,6 +100,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Book.cs" />
+    <Compile Include="Models\BorrowLog.cs" />
     <Compile Include="Models\RaLibraryContext.cs" />
     <Compile Include="Models\UserDetailsDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
