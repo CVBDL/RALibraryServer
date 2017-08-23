@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
@@ -57,7 +58,23 @@ namespace RaLibrary.Controllers
         /// <param name="book">The borrowed book.</param>
         [Route("books")]
         [HttpPost]
-        public void BorrowBook(Book book) { }
+        public async Task<IHttpActionResult> BorrowBook(Book book) 
+        {
+            string user = "lliao2@ra.rockwell.com";
+            DateTime borrowTime = DateTime.UtcNow;
+
+            BorrowLog log = new BorrowLog();
+            log.Book = book;
+            log.Borrower = user;
+            log.BorrowTime = borrowTime;
+            log.F_BookID = book.Id;
+
+            db.BorrowLogs.Add(log);
+
+            await db.SaveChangesAsync();
+
+            return Ok();
+        }
 
         /// <summary>
         /// Return a book for the authenticated user.
@@ -65,7 +82,27 @@ namespace RaLibrary.Controllers
         /// <param name="id">The book's id.</param>
         [Route("books/{id:int}")]
         [HttpDelete]
-        public void ReturnBook(int id) {}
+        public async Task<IHttpActionResult> ReturnBook(int id) 
+        {
+            var logs = from log in db.BorrowLogs
+                       where (log.F_BookID == id && log.ReturnTime == null)
+                       select log;
+
+            DateTime returnTime = DateTime.UtcNow;
+
+            if (logs.Count() == 1)
+            {
+                logs.ElementAt(0).ReturnTime = returnTime;
+            }
+            else
+            {
+                return NotFound();
+            }
+
+            await db.SaveChangesAsync();
+
+            return Ok();
+        }
 
         protected override void Dispose(bool disposing)
         {
