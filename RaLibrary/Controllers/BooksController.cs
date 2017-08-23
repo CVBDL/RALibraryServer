@@ -25,7 +25,7 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("")]
         [HttpGet]
-        [RAAuthentication]
+        [RAAuthentication(Realm = "books")]
         public IQueryable<Book> ListBooks()
         {
             ClaimsIdentity identity = User.Identity as ClaimsIdentity;

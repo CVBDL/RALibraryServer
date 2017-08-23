@@ -8,13 +8,10 @@ namespace RaLibrary.Results
 {
     public class AuthenticationFailureResult : IHttpActionResult
     {
-        public AuthenticationFailureResult(string reasonPhrase, HttpRequestMessage request)
+        public AuthenticationFailureResult(HttpRequestMessage request)
         {
-            ReasonPhrase = reasonPhrase;
             Request = request;
         }
-
-        public string ReasonPhrase { get; private set; }
 
         public HttpRequestMessage Request { get; private set; }
 
@@ -27,7 +24,6 @@ namespace RaLibrary.Results
         {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
             response.RequestMessage = Request;
-            response.ReasonPhrase = ReasonPhrase;
             return response;
         }
     }

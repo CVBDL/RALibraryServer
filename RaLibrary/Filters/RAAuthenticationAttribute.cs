@@ -3,6 +3,7 @@ using RaLibrary.Utils;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -16,7 +17,22 @@ namespace RaLibrary.Filters
 {
     public class RAAuthenticationAttribute : Attribute, IAuthenticationFilter
     {
-        public string Realm { get; set; }
+        private string realm = "ralibrary_resources";
+
+        public string Realm
+        {
+            get
+            {
+                return realm;
+            }
+            set
+            {
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    realm = value;
+                }
+            }
+        }
 
         public async Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
         {
@@ -30,17 +46,17 @@ namespace RaLibrary.Filters
                 return;
             }
 
-            if (authorization.Scheme != "Bearer")
+            if (authorization.Scheme != SCHEME)
             {
                 // No authentication was attempted (for this authentication method).
                 // Do not set either Principal (which would indicate success) or ErrorResult (indicating an error).
                 return;
             }
 
-            if (String.IsNullOrEmpty(authorization.Parameter))
+            if (string.IsNullOrEmpty(authorization.Parameter))
             {
                 // Authentication was attempted but failed. Set ErrorResult to indicate an error.
-                context.ErrorResult = new AuthenticationFailureResult("Missing credentials", request);
+                context.ErrorResult = new AuthenticationFailureResult(request);
                 return;
             }
 
@@ -74,61 +90,58 @@ namespace RaLibrary.Filters
             if (strEmail == null)
             {
                 // Authentication was attempted but failed. Set ErrorResult to indicate an error.
-                context.ErrorResult = new AuthenticationFailureResult("Invalid credentials", request);
+                context.ErrorResult = new AuthenticationFailureResult(request);
                 return;
             }
 
             IList<Claim> claimCollection = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, strName)
-                , new Claim(ClaimTypes.Email, strEmail)
+                new Claim(ClaimTypes.Name, strName),
+                new Claim(ClaimTypes.Email, strEmail)
             };
 
-            ClaimsIdentity claimIdentity = new ClaimsIdentity(claimCollection, "Bearer");
-            ClaimsPrincipal claimPrincipal = new ClaimsPrincipal(claimIdentity);
-            if (claimPrincipal == null)
+            ClaimsIdentity claimIdentity = new ClaimsIdentity(claimCollection, SCHEME);
+            ClaimsPrincipal principal = new ClaimsPrincipal(claimIdentity);
+            if (principal == null)
             {
                 // Authentication was attempted but failed. Set ErrorResult to indicate an error.
-                context.ErrorResult = new AuthenticationFailureResult("Invalid Username or Email", request);
+                context.ErrorResult = new AuthenticationFailureResult(request);
             }
             else
             {
                 // Authentication was attempted and succeeded. Set Principal to the authenticated user.
-                context.Principal = claimPrincipal;
-                Thread.CurrentPrincipal = claimPrincipal;
+                context.Principal = principal;
             }
         }
 
+        /// <summary>
+        /// Only add challenge to unauthorized requests.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
         {
-            Challenge(context);
+            string error = "invalid_token";
+
+            // A correct implementation should verify that Realm does not contain a quote character unless properly
+            // escaped (precededed by a backslash that is not itself escaped).
+            string parameter = string.Format("realm=\"{0}\",error=\"{1}\"", Realm, error);
+
+            var challenge = new AuthenticationHeaderValue(SCHEME, parameter);
+
+            context.Result = new AddChallengeOnUnauthorizedResult(challenge, context.Result);
+            
             return Task.FromResult(0);
         }
-
-        private void Challenge(HttpAuthenticationChallengeContext context)
-        {
-            string parameter;
-
-            if (String.IsNullOrEmpty(Realm))
-            {
-                parameter = null;
-            }
-            else
-            {
-                // A correct implementation should verify that Realm does not contain a quote character unless properly
-                // escaped (precededed by a backslash that is not itself escaped).
-                parameter = "realm=\"" + Realm + "\"";
-            }
-
-            context.ChallengeWith("Basic", parameter);
-        }
-
+        
         public virtual bool AllowMultiple
         {
             get { return false; }
         }
 
-        private static readonly HttpClient httpClient = new HttpClient();
+        private static readonly string SCHEME = "Bearer";
 
+        private static readonly HttpClient httpClient = new HttpClient();
     }
 }
