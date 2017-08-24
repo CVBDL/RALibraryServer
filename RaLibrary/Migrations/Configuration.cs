@@ -10,7 +10,7 @@ namespace RaLibrary.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
         }
 
         protected override void Seed(RaLibrary.Models.RaLibraryContext context)

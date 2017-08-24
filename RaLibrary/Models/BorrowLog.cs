@@ -11,8 +11,9 @@ namespace RaLibrary.Models
     {
         public int Id { get; set; }
 
+        [ForeignKey("Book")]
         public int F_BookID { get; set; }
-        [ForeignKey("F_BookID")]
+
         public virtual Book Book { get; set; }
 
         [Required]
@@ -22,6 +23,6 @@ namespace RaLibrary.Models
         [Required]
         public DateTime BorrowTime { get; set; }
 
-        public DateTime ReturnTime { get; set; }
+        public DateTime? ReturnTime { get; set; }
     }
 }

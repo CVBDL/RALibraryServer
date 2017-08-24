@@ -58,20 +58,25 @@ namespace RaLibrary.Controllers
         /// <param name="book">The borrowed book.</param>
         [Route("books")]
         [HttpPost]
-        public async Task<IHttpActionResult> BorrowBook(Book book) 
+        public async Task<IHttpActionResult> BorrowBook(Book book)
         {
-            string user = "lliao2@ra.rockwell.com";
-            DateTime borrowTime = DateTime.UtcNow;
+            string user = "test@example.com";
 
             BorrowLog log = new BorrowLog();
-            log.Book = book;
-            log.Borrower = user;
-            log.BorrowTime = borrowTime;
             log.F_BookID = book.Id;
+            log.Borrower = user;
+            log.BorrowTime = DateTime.UtcNow;
 
             db.BorrowLogs.Add(log);
 
-            await db.SaveChangesAsync();
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch(Exception)
+            {
+                return InternalServerError();
+            }
 
             return Ok();
         }
