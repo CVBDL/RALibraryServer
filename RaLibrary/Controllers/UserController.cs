@@ -51,24 +51,16 @@ namespace RaLibrary.Controllers
         /// </summary>
         [Route("books")]
         [HttpGet]
-        public IHttpActionResult ListBorrowedBooks()
+        public IQueryable<Book> ListBorrowedBooks()
         {
             ClaimsIdentity identity = User.Identity as ClaimsIdentity;
             string email = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
 
-            try
-            {
-                var result = from book in db.Books.ToList()
-                             where book.Borrower == email
-                             select book;
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            IQueryable<Book> result = from book in db.Books
+                         where book.Borrower == email
+                         select book;
 
-            return BadRequest("Failed to find books");
+            return result;
         }
 
         /// <summary>
@@ -77,6 +69,7 @@ namespace RaLibrary.Controllers
         /// <param name="book">The borrowed book.</param>
         [Route("books")]
         [HttpPost]
+        [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> BorrowBook(Book book)
         {
             string user = "test@example.com";
@@ -92,9 +85,9 @@ namespace RaLibrary.Controllers
             {
                 await db.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (DbUpdateConcurrencyException)
             {
-                return InternalServerError();
+                return BadRequest();
             }
 
             return Ok();
@@ -106,6 +99,7 @@ namespace RaLibrary.Controllers
         /// <param name="id">The book's id.</param>
         [Route("books/{id:int}")]
         [HttpDelete]
+        [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> ReturnBook(int id)
         {
             var logs = from log in db.BorrowLogs

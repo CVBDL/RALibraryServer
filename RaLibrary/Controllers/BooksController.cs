@@ -39,7 +39,7 @@ namespace RaLibrary.Controllers
         /// </summary>
         /// <param name="id">The book's id.</param>
         /// <returns></returns>
-        [Route("{id:int}")]
+        [Route("{id:int}", Name = "GetSingleBook")]
         [HttpGet]
         [ResponseType(typeof(Book))]
         public async Task<IHttpActionResult> GetBook(int id)
@@ -88,7 +88,7 @@ namespace RaLibrary.Controllers
                 }
                 else
                 {
-                    throw;
+                    return BadRequest();
                 }
             }
 
@@ -100,20 +100,26 @@ namespace RaLibrary.Controllers
         /// </summary>
         /// <param name="book">The new book.</param>
         /// <returns></returns>
-        [Route("", Name = "CreateBook")]
+        [Route("")]
         [HttpPost]
         [ResponseType(typeof(Book))]
         public async Task<IHttpActionResult> CreateBook(Book book)
         {
+            if (string.IsNullOrWhiteSpace(book.Borrower))
+            {
+                book.Borrower = null;
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
             db.Books.Add(book);
+
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("CreateBook", new { id = book.Id }, book);
+            return CreatedAtRoute("GetSingleBook", new { id = book.Id }, book);
         }
 
         /// <summary>
@@ -133,6 +139,7 @@ namespace RaLibrary.Controllers
             }
 
             db.Books.Remove(book);
+
             await db.SaveChangesAsync();
 
             return Ok(book);
