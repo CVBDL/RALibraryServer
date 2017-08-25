@@ -25,12 +25,10 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("")]
         [HttpGet]
-        [RAAuthentication(Realm = "books")]
+        [RaAuthentication(Realm = "books")]
+        [RequireAdmin]
         public IQueryable<Book> ListBooks()
         {
-            ClaimsIdentity identity = User.Identity as ClaimsIdentity;
-            string email = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
-
             return db.Books;
         }
         
@@ -61,6 +59,8 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("{id:int}")]
         [HttpPost]
+        [RaAuthentication(Realm = "books")]
+        [RequireAdmin]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> UpdateBook(int id, Book book)
         {
@@ -102,6 +102,8 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("")]
         [HttpPost]
+        [RaAuthentication(Realm = "books")]
+        [RequireAdmin]
         [ResponseType(typeof(Book))]
         public async Task<IHttpActionResult> CreateBook(Book book)
         {
@@ -129,6 +131,8 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("{id:int}")]
         [HttpDelete]
+        [RaAuthentication(Realm = "books")]
+        [RequireAdmin]
         [ResponseType(typeof(Book))]
         public async Task<IHttpActionResult> DeleteBook(int id)
         {

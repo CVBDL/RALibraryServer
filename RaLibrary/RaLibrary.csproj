@@ -94,10 +94,12 @@
     <Compile Include="Controllers\BooksController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Filters\RAAuthenticationAttribute.cs" />
+    <Compile Include="Filters\RequireAdminAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Administrator.cs" />
     <Compile Include="Models\Book.cs" />
     <Compile Include="Models\BorrowLog.cs" />
     <Compile Include="Models\RaLibraryContext.cs" />

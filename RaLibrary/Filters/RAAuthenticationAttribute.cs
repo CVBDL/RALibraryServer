@@ -15,7 +15,7 @@ using System.Web.Http.Filters;
 
 namespace RaLibrary.Filters
 {
-    public class RAAuthenticationAttribute : Attribute, IAuthenticationFilter
+    public class RaAuthenticationAttribute : Attribute, IAuthenticationFilter
     {
         private string realm = "ralibrary_resources";
 

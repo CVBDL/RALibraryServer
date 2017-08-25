@@ -9,6 +9,7 @@ using System.Web.Http.Description;
 using RaLibrary.Models;
 using RaLibrary.Utils;
 using System.Security.Claims;
+using RaLibrary.Filters;
 
 namespace RaLibrary.Controllers
 {
@@ -27,8 +28,11 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("details")]
         [HttpGet]
+        [RaAuthentication(Realm = "user")]
         public UserDetailsDTO GetUserDetails()
         {
+            bool isAdmin = false;
+
             Jwt jwt = Jwt.GetJwtFromRequestHeader(Request);
             if (jwt != null)
             {
@@ -36,13 +40,22 @@ namespace RaLibrary.Controllers
 
                 if (jwtPayload != null)
                 {
-                    string Email = jwtPayload.Email;
+                    string email = jwtPayload.Email;
+
+                    int count = (from admin in db.Administrators
+                                 where admin.Email == email
+                                 select admin).Count();
+
+                    if (count > 0)
+                    {
+                        isAdmin = true;
+                    }
                 }
             }
 
             return new UserDetailsDTO
             {
-                IsAdmin = false
+                IsAdmin = isAdmin
             };
         }
 
@@ -51,6 +64,7 @@ namespace RaLibrary.Controllers
         /// </summary>
         [Route("books")]
         [HttpGet]
+        [RaAuthentication(Realm = "user")]
         public IQueryable<Book> ListBorrowedBooks()
         {
             ClaimsIdentity identity = User.Identity as ClaimsIdentity;
@@ -69,6 +83,7 @@ namespace RaLibrary.Controllers
         /// <param name="book">The borrowed book.</param>
         [Route("books")]
         [HttpPost]
+        [RaAuthentication(Realm = "user")]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> BorrowBook(Book book)
         {
@@ -99,6 +114,7 @@ namespace RaLibrary.Controllers
         /// <param name="id">The book's id.</param>
         [Route("books/{id:int}")]
         [HttpDelete]
+        [RaAuthentication(Realm = "user")]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> ReturnBook(int id)
         {

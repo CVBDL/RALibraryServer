@@ -15,12 +15,10 @@ namespace RaLibrary.Models
         // For more information refer to the documentation:
         // http://msdn.microsoft.com/en-us/data/jj591621.aspx
     
-        public RaLibraryContext() : base("name=RaLibraryContext")
-        {
-        }
+        public RaLibraryContext() : base("name=RaLibraryContext") { }
 
         public DbSet<Book> Books { get; set; }
         public DbSet<BorrowLog> BorrowLogs { get; set; }
-
+        public DbSet<Administrator> Administrators { get; set; }
     }
 }
