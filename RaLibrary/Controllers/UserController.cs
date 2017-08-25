@@ -8,6 +8,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using RaLibrary.Models;
 using RaLibrary.Utils;
+using System.Security.Claims;
 
 namespace RaLibrary.Controllers
 {
@@ -19,7 +20,7 @@ namespace RaLibrary.Controllers
     public class UserController : ApiController
     {
         private RaLibraryContext db = new RaLibraryContext();
-        
+
         /// <summary>
         /// Get user details.
         /// </summary>
@@ -50,7 +51,25 @@ namespace RaLibrary.Controllers
         /// </summary>
         [Route("books")]
         [HttpGet]
-        public void ListBorrowedBooks() { }
+        public IHttpActionResult ListBorrowedBooks()
+        {
+            ClaimsIdentity identity = User.Identity as ClaimsIdentity;
+            string email = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+
+            try
+            {
+                var result = from book in db.Books.ToList()
+                             where book.Borrower == email
+                             select book;
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return BadRequest("Failed to find books");
+        }
 
         /// <summary>
         /// Borrow a book for the authenticated user.
@@ -73,7 +92,7 @@ namespace RaLibrary.Controllers
             {
                 await db.SaveChangesAsync();
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return InternalServerError();
             }
@@ -87,7 +106,7 @@ namespace RaLibrary.Controllers
         /// <param name="id">The book's id.</param>
         [Route("books/{id:int}")]
         [HttpDelete]
-        public async Task<IHttpActionResult> ReturnBook(int id) 
+        public async Task<IHttpActionResult> ReturnBook(int id)
         {
             var logs = from log in db.BorrowLogs
                        where (log.F_BookID == id && log.ReturnTime == null)
