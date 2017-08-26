@@ -42,10 +42,7 @@ namespace RaLibrary.Controllers
                 {
                     string email = jwtPayload.Email;
 
-                    int count = (from admin in db.Administrators
-                                 where admin.Email == email
-                                 select admin).Count();
-
+                    int count = db.Administrators.Count(admin => admin.Email == email);
                     if (count > 0)
                     {
                         isAdmin = true;
@@ -70,11 +67,7 @@ namespace RaLibrary.Controllers
             ClaimsIdentity identity = User.Identity as ClaimsIdentity;
             string email = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
 
-            IQueryable<Book> result = from book in db.Books
-                         where book.Borrower == email
-                         select book;
-
-            return result;
+            return db.Books.Where(book => book.Borrower == email);
         }
 
         /// <summary>

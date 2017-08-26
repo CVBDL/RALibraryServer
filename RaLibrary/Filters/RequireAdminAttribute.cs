@@ -24,10 +24,7 @@ namespace RaLibrary.Filters
 
             if (!string.IsNullOrWhiteSpace(email))
             {
-                int count = (from admin in db.Administrators
-                              where admin.Email == email
-                              select admin).Count();
-                return count > 0;
+                return db.Administrators.Count(admin => admin.Email == email) > 0;
             }
 
             return false;
