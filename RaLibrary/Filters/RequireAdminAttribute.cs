@@ -8,15 +8,15 @@ using System.Web.Http.Controllers;
 
 namespace RaLibrary.Filters
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class RequireAdminAttribute : AuthorizeAttribute
     {
         private RaLibraryContext db = new RaLibraryContext();
 
         protected override bool IsAuthorized(HttpActionContext actionContext)
         {
-            string email = string.Empty;
-            ClaimsIdentity identity = HttpContext.Current.User.Identity as ClaimsIdentity;
+            var email = string.Empty;
+            var identity = HttpContext.Current.User.Identity as ClaimsIdentity;
+
             if (identity != null && identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email) != null)
             {
                 email = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
@@ -28,6 +28,11 @@ namespace RaLibrary.Filters
             }
 
             return false;
+        }
+
+        public override bool AllowMultiple
+        {
+            get { return false; }
         }
     }
 }

@@ -64,8 +64,8 @@ namespace RaLibrary.Controllers
         [RaAuthentication(Realm = "user")]
         public IQueryable<Book> ListBorrowedBooks()
         {
-            ClaimsIdentity identity = User.Identity as ClaimsIdentity;
-            string email = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+            var identity = User.Identity as ClaimsIdentity;
+            var email = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
 
             return db.Books.Where(book => book.Borrower == email);
         }

@@ -1,4 +1,5 @@
-﻿using RaLibrary.Results;
+﻿using RaLibrary.Models;
+using RaLibrary.Results;
 using RaLibrary.Utils;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace RaLibrary.Filters
 {
     public class RaAuthenticationAttribute : Attribute, IAuthenticationFilter
     {
+        private RaLibraryContext db = new RaLibraryContext();
+
         private string realm = "ralibrary_resources";
 
         public string Realm
@@ -87,7 +90,7 @@ namespace RaLibrary.Filters
                 }
             }
 
-            if (strEmail == null)
+            if (string.IsNullOrWhiteSpace(strEmail))
             {
                 // Authentication was attempted but failed. Set ErrorResult to indicate an error.
                 context.ErrorResult = new AuthenticationFailureResult(request);
@@ -99,6 +102,18 @@ namespace RaLibrary.Filters
                 new Claim(ClaimTypes.Name, strName),
                 new Claim(ClaimTypes.Email, strEmail)
             };
+
+            var isAdmin = db.Administrators.Count(
+                    admin => string.Equals(admin.Email, strEmail, StringComparison.OrdinalIgnoreCase)) > 0;
+            if (isAdmin)
+            {
+                claimCollection.Add(new Claim(ClaimTypes.Role, RoleTypes.Administrators));
+                claimCollection.Add(new Claim(ClaimTypes.Role, RoleTypes.NormalUsers));
+            }
+            else
+            {
+                claimCollection.Add(new Claim(ClaimTypes.Role, RoleTypes.NormalUsers));
+            }
 
             ClaimsIdentity claimIdentity = new ClaimsIdentity(claimCollection, SCHEME);
             ClaimsPrincipal principal = new ClaimsPrincipal(claimIdentity);
