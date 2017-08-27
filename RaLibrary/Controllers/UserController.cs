@@ -29,6 +29,7 @@ namespace RaLibrary.Controllers
         [Route("details")]
         [HttpGet]
         [RaAuthentication(Realm = "user")]
+        [RaLibraryAuthorize(Roles = RoleTypes.NormalUsers)]
         public UserDetailsDTO GetUserDetails()
         {
             bool isAdmin = false;
@@ -62,6 +63,7 @@ namespace RaLibrary.Controllers
         [Route("books")]
         [HttpGet]
         [RaAuthentication(Realm = "user")]
+        [RaLibraryAuthorize(Roles = RoleTypes.NormalUsers)]
         public IQueryable<Book> ListBorrowedBooks()
         {
             var identity = User.Identity as ClaimsIdentity;
@@ -77,6 +79,7 @@ namespace RaLibrary.Controllers
         [Route("books")]
         [HttpPost]
         [RaAuthentication(Realm = "user")]
+        [RaLibraryAuthorize(Roles = RoleTypes.NormalUsers)]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> BorrowBook(Book book)
         {
@@ -108,6 +111,7 @@ namespace RaLibrary.Controllers
         [Route("books/{id:int}")]
         [HttpDelete]
         [RaAuthentication(Realm = "user")]
+        [RaLibraryAuthorize(Roles = RoleTypes.NormalUsers)]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> ReturnBook(int id)
         {
