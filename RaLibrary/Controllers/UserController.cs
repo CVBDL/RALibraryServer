@@ -129,24 +129,38 @@ namespace RaLibrary.Controllers
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> ReturnBook(int id)
         {
-            var logs = from log in db.BorrowLogs
-                       where (log.F_BookID == id && log.ReturnTime == null)
-                       select log;
-
-            DateTime returnTime = DateTime.UtcNow;
-
-            if (logs.Count() == 1)
-            {
-                logs.ElementAt(0).ReturnTime = returnTime;
-            }
-            else
+            var logRecord = db.BorrowLogs.Where(log => log.F_BookID == id && log.ReturnTime == null).First();
+            if (logRecord == null)
             {
                 return NotFound();
             }
+            else
+            {
+                logRecord.ReturnTime = DateTime.UtcNow;
+                db.Entry(logRecord).State = EntityState.Modified;
+            }
 
-            await db.SaveChangesAsync();
+            var bookRecord = await db.Books.FindAsync(id);
+            if (bookRecord == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                bookRecord.Borrower = null;
+                db.Entry(bookRecord).State = EntityState.Modified;
+            }
 
-            return Ok();
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return BadRequest();
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         protected override void Dispose(bool disposing)
