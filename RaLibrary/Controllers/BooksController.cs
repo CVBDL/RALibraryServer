@@ -24,8 +24,6 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("")]
         [HttpGet]
-        [RaAuthentication]
-        [RaLibraryAuthorize(Roles = RoleTypes.Administrators)]
         public IQueryable<Book> ListBooks()
         {
             return db.Books;

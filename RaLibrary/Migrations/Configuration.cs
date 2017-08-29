@@ -11,6 +11,7 @@ namespace RaLibrary.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
+            AutomaticMigrationDataLossAllowed = true;
         }
 
         protected override void Seed(RaLibrary.Models.RaLibraryContext context)
@@ -45,6 +46,48 @@ namespace RaLibrary.Migrations
                     Id = 3,
                     Code = "P003",
                     Title = "C#: Become A Master In C#"
+                },
+                new Book()
+                {
+                    Id = 4,
+                    Code = "A-001",
+                    Title = "Advanced FrameMaker"
+                },
+                new Book()
+                {
+                    Id = 5,
+                    Code = "A003",
+                    Title = "代码大全第二版"
+                },
+                new Book()
+                {
+                    Id = 6,
+                    Code = "A005",
+                    Title = "J2ME 开发精解"
+                },
+                new Book()
+                {
+                    Id = 7,
+                    Code = "A006",
+                    Title = "J2ME 无线平台应用开发"
+                },
+                new Book()
+                {
+                    Id = 8,
+                    Code = "A011",
+                    Title = "Java 夜未眠"
+                },
+                new Book()
+                {
+                    Id = 9,
+                    Code = "G001",
+                    Title = "A Guide to the Project Management Body of Knowledg"
+                },
+                new Book()
+                {
+                    Id = 10,
+                    Code = "G002",
+                    Title = "现代卓越PMP考试"
                 }
             );
         }
