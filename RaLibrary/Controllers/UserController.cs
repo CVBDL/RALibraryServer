@@ -2,8 +2,10 @@
 using RaLibrary.Models;
 using RaLibrary.Utils;
 using System;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -81,14 +83,28 @@ namespace RaLibrary.Controllers
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> BorrowBook(Book book)
         {
-            string user = "test@example.com";
+            var identity = User.Identity as ClaimsIdentity;
+            var email = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
 
-            BorrowLog log = new BorrowLog();
-            log.F_BookID = book.Id;
-            log.Borrower = user;
-            log.BorrowTime = DateTime.UtcNow;
+            BorrowLog borrowLogRecord = new BorrowLog()
+            {
+                F_BookID = book.Id,
+                Borrower = email,
+                BorrowTime = DateTime.UtcNow
+            };
 
-            db.BorrowLogs.Add(log);
+            db.BorrowLogs.Add(borrowLogRecord);
+
+            Book bookRecord = await db.Books.FindAsync(book.Id);
+            if (bookRecord == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                bookRecord.Borrower = email;
+                db.Entry(bookRecord).State = EntityState.Modified;
+            }
 
             try
             {
@@ -99,7 +115,7 @@ namespace RaLibrary.Controllers
                 return BadRequest();
             }
 
-            return Ok();
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         /// <summary>
