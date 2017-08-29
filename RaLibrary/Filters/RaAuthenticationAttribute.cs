@@ -64,19 +64,16 @@ namespace RaLibrary.Filters
             }
 
             // Post token to Authentication Server of RA
-            var values = new Dictionary<string, string>
+            string tokenValidationEndpoint = ConfigurationManager.AppSettings.Get("TokenValidationEndpoint");
+            Dictionary<string, string> values = new Dictionary<string, string>
                 {
                    { "IdToken", authorization.Parameter },
                 };
-
-            var content = new FormUrlEncodedContent(values);
-
-            var tokenValidationEndpoint = ConfigurationManager.AppSettings.Get("TokenValidationEndpoint");
-            var response = await httpClient.PostAsync(tokenValidationEndpoint, content);
+            FormUrlEncodedContent content = new FormUrlEncodedContent(values);
+            HttpResponseMessage response = await httpClient.PostAsync(tokenValidationEndpoint, content);
 
             string email = string.Empty;
             string name = string.Empty;
-
             if (response.StatusCode == HttpStatusCode.NoContent) // succeeded
             {
                 Jwt jwtInfo = Jwt.GetJwtFromRequestHeader(request);
@@ -105,7 +102,7 @@ namespace RaLibrary.Filters
                 new Claim(ClaimTypes.Email, email)
             };
 
-            var isAdmin = db.Administrators.Count(admin => admin.Email == email) > 0;
+            bool isAdmin = db.Administrators.Count(admin => admin.Email == email) > 0;
             if (isAdmin)
             {
                 claimCollection.Add(new Claim(ClaimTypes.Role, RoleTypes.Administrators));
@@ -138,16 +135,15 @@ namespace RaLibrary.Filters
         /// <returns></returns>
         public Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
         {
-            string error = "invalid_token";
+            var error = "invalid_token";
 
             // A correct implementation should verify that Realm does not contain a quote character unless properly
             // escaped (precededed by a backslash that is not itself escaped).
-            string parameter = string.Format("realm=\"{0}\",error=\"{1}\"", Realm, error);
-
+            var parameter = string.Format("realm=\"{0}\",error=\"{1}\"", Realm, error);
             var challenge = new AuthenticationHeaderValue(SCHEME, parameter);
 
             context.Result = new AddChallengeOnUnauthorizedResult(challenge, context.Result);
-            
+
             return Task.FromResult(0);
         }
         
