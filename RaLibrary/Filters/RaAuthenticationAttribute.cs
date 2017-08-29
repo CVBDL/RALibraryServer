@@ -74,7 +74,9 @@ namespace RaLibrary.Filters
             var tokenValidationEndpoint = ConfigurationManager.AppSettings.Get("TokenValidationEndpoint");
             var response = await httpClient.PostAsync(tokenValidationEndpoint, content);
 
-            string strEmail = null, strName = null;
+            string email = string.Empty;
+            string name = string.Empty;
+
             if (response.StatusCode == HttpStatusCode.NoContent) // succeeded
             {
                 Jwt jwtInfo = Jwt.GetJwtFromRequestHeader(request);
@@ -84,13 +86,13 @@ namespace RaLibrary.Filters
 
                     if (jwtPayload != null)
                     {
-                        strEmail = jwtPayload.Email;
-                        strName = jwtPayload.Name;
+                        email = jwtPayload.Email;
+                        name = jwtPayload.Name;
                     }
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(strEmail))
+            if (string.IsNullOrWhiteSpace(email))
             {
                 // Authentication was attempted but failed. Set ErrorResult to indicate an error.
                 context.ErrorResult = new AuthenticationFailureResult(request);
@@ -99,12 +101,11 @@ namespace RaLibrary.Filters
 
             IList<Claim> claimCollection = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, strName),
-                new Claim(ClaimTypes.Email, strEmail)
+                new Claim(ClaimTypes.Name, name),
+                new Claim(ClaimTypes.Email, email)
             };
 
-            var isAdmin = db.Administrators.Count(
-                    admin => string.Equals(admin.Email, strEmail, StringComparison.OrdinalIgnoreCase)) > 0;
+            var isAdmin = db.Administrators.Count(admin => admin.Email == email) > 0;
             if (isAdmin)
             {
                 claimCollection.Add(new Claim(ClaimTypes.Role, RoleTypes.Administrators));
