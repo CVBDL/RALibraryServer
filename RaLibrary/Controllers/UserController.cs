@@ -18,6 +18,8 @@ namespace RaLibrary.Controllers
     /// <https://github.com/CVBDL/RALibraryDocs/blob/master/rest-api.md#users>
     /// </summary>
     [RoutePrefix("api/user")]
+    [RaAuthentication]
+    [RaLibraryAuthorize(Roles = RoleTypes.NormalUsers)]
     public class UserController : ApiController
     {
         private RaLibraryContext db = new RaLibraryContext();
@@ -28,8 +30,6 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("details")]
         [HttpGet]
-        [RaAuthentication]
-        [RaLibraryAuthorize(Roles = RoleTypes.NormalUsers)]
         public UserDetailsDTO GetUserDetails()
         {
             bool isAdmin = false;
@@ -62,8 +62,6 @@ namespace RaLibrary.Controllers
         /// </summary>
         [Route("books")]
         [HttpGet]
-        [RaAuthentication]
-        [RaLibraryAuthorize(Roles = RoleTypes.NormalUsers)]
         public IQueryable<Book> ListBorrowedBooks()
         {
             var identity = User.Identity as ClaimsIdentity;
@@ -78,8 +76,6 @@ namespace RaLibrary.Controllers
         /// <param name="book">The borrowed book.</param>
         [Route("books")]
         [HttpPost]
-        [RaAuthentication]
-        [RaLibraryAuthorize(Roles = RoleTypes.NormalUsers)]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> BorrowBook(Book book)
         {
@@ -124,12 +120,10 @@ namespace RaLibrary.Controllers
         /// <param name="id">The book's id.</param>
         [Route("books/{id:int}")]
         [HttpDelete]
-        [RaAuthentication]
-        [RaLibraryAuthorize(Roles = RoleTypes.NormalUsers)]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> ReturnBook(int id)
         {
-            var logRecord = db.BorrowLogs.Where(log => log.F_BookID == id && log.ReturnTime == null).First();
+            var logRecord = db.BorrowLogs.First(log => log.F_BookID == id && log.ReturnTime == null);
             if (logRecord == null)
             {
                 return NotFound();
