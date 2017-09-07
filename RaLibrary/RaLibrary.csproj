@@ -91,6 +91,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="BooksApi\BookDetails.cs" />
+    <Compile Include="BooksApi\BookNotFoundException.cs" />
+    <Compile Include="BooksApi\BooksOpenApi.cs" />
+    <Compile Include="BooksApi\DoubanBook.cs" />
+    <Compile Include="BooksApi\DoubanBooksOpenApi.cs" />
+    <Compile Include="Controllers\BooksApiController.cs" />
     <Compile Include="Controllers\BooksController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Filters\RaAuthenticationAttribute.cs" />

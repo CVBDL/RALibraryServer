@@ -28,7 +28,7 @@ namespace RaLibrary.Controllers
         {
             return db.Books;
         }
-        
+
         /// <summary>
         /// Get a book.
         /// </summary>
