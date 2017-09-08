@@ -45,12 +45,12 @@ namespace RaLibrary.BooksApi
                 ISBN13 = book.isbn13,
                 Title = book.title,
                 Subtitle = book.subtitle,
-                Authors = string.Join(",", book.author),
+                Authors = authors,
                 Publisher = book.publisher,
                 PublishedDate = book.pubdate,
                 Description = book.summary,
                 ThumbnailLink = book.images.medium,
-                PageCount = ushort.Parse(book.pages)
+                PageCount = pageCount
             };
         }
     }
