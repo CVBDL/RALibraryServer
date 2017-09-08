@@ -7,3 +7,4 @@ ralibrary.csproj.user
 ralibrary/App_Data/
 ralibrary/Migrations/*
 !ralibrary/Migrations/Configuration.cs
+RaLibrary/Properties/PublishProfiles/
