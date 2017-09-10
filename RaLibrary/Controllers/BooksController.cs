@@ -1,5 +1,6 @@
 ﻿using RaLibrary.Filters;
 using RaLibrary.Models;
+using RaLibrary.Utils;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
@@ -71,6 +72,26 @@ namespace RaLibrary.Controllers
                 return BadRequest();
             }
 
+            try
+            {
+                Isbn isbn10 = new Isbn(book.ISBN10);
+                book.ISBN10 = isbn10.NormalizedValue;
+            }
+            catch (IsbnFormatException)
+            {
+                return BadRequest("Invalid ISBN 10.");
+            }
+
+            try
+            {
+                Isbn isbn13 = new Isbn(book.ISBN13);
+                book.ISBN13 = isbn13.NormalizedValue;
+            }
+            catch (IsbnFormatException)
+            {
+                return BadRequest("Invalid ISBN 13.");
+            }
+
             db.Entry(book).State = EntityState.Modified;
 
             try
@@ -107,6 +128,26 @@ namespace RaLibrary.Controllers
             if (string.IsNullOrWhiteSpace(book.Borrower))
             {
                 book.Borrower = null;
+            }
+
+            try
+            {
+                Isbn isbn10 = new Isbn(book.ISBN10);
+                book.ISBN10 = isbn10.NormalizedValue;
+            }
+            catch (IsbnFormatException)
+            {
+                return BadRequest("Invalid ISBN 10.");
+            }
+
+            try
+            {
+                Isbn isbn13 = new Isbn(book.ISBN13);
+                book.ISBN13 = isbn13.NormalizedValue;
+            }
+            catch (IsbnFormatException)
+            {
+                return BadRequest("Invalid ISBN 13.");
             }
 
             if (!ModelState.IsValid)

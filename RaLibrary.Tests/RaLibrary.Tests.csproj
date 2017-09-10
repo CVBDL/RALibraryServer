@@ -33,7 +33,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -50,6 +52,7 @@
   <ItemGroup>
     <Compile Include="RaLibraryEmailTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\IsbnTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ralibrary.Email\RaLibrary.Email.csproj">

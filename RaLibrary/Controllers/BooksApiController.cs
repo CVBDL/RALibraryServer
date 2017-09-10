@@ -1,4 +1,5 @@
 ﻿using RaLibrary.BooksApi;
+using RaLibrary.Utils;
 using System;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -9,16 +10,25 @@ namespace RaLibrary.Controllers
     [RoutePrefix("api/book")]
     public class BooksApiController : ApiController
     {
-        [Route("isbn/{isbn}")]
+        [Route("isbn/{strIsbn}")]
         [HttpGet]
         [ResponseType(typeof(BookDetails))]
-        public async Task<IHttpActionResult> GetBookByIsbn(string isbn)
+        public async Task<IHttpActionResult> GetBookByIsbn(string strIsbn)
         {
-            BooksOpenApi doubanBooksApi = new DoubanBooksOpenApi();
-
-            BookDetails bookDetails = null;
+            Isbn isbn;
             try
             {
+                isbn = new Isbn(strIsbn);
+            }
+            catch (IsbnFormatException)
+            {
+                return BadRequest("Invalid ISBN.");
+            }
+
+            BookDetails bookDetails;
+            try
+            {
+                IBooksOpenApi doubanBooksApi = new DoubanBooksOpenApi();
                 bookDetails = await doubanBooksApi.QueryIsbnAsync(isbn);
             }
             catch (BookNotFoundException)

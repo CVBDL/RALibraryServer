@@ -1,18 +1,19 @@
 ﻿using Newtonsoft.Json;
+using RaLibrary.Utils;
 using System.Configuration;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace RaLibrary.BooksApi
 {
-    public class DoubanBooksOpenApi : BooksOpenApi
+    public class DoubanBooksOpenApi : IBooksOpenApi
     {
         public static string baseRequestUri = ConfigurationManager.AppSettings.Get("DoubanBooksApiEndpoint");
         public static HttpClient httpClient = new HttpClient();
 
-        public async Task<BookDetails> QueryIsbnAsync(string isbn)
+        public async Task<BookDetails> QueryIsbnAsync(Isbn isbn)
         {
-            string requestUri = baseRequestUri + isbn;
+            string requestUri = baseRequestUri + isbn.NormalizedValue;
             HttpResponseMessage response = await httpClient.GetAsync(requestUri);
 
             try

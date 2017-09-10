@@ -93,6 +93,7 @@
     <Compile Include="BooksApi\BooksOpenApi.cs" />
     <Compile Include="BooksApi\DoubanBook.cs" />
     <Compile Include="BooksApi\DoubanBooksOpenApi.cs" />
+    <Compile Include="Utils\Isbn.cs" />
     <Compile Include="Controllers\BooksApiController.cs" />
     <Compile Include="Controllers\BooksController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Results\AddChallengeOnUnauthorizedResult.cs" />
     <Compile Include="Results\AuthenticationFailureResult.cs" />
+    <Compile Include="Utils\IsbnFormatException.cs" />
     <Compile Include="Utils\Jwt.cs" />
     <Compile Include="Utils\JwtPayload.cs" />
   </ItemGroup>

@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using RaLibrary.Utils;
+using System.Threading.Tasks;
 
 namespace RaLibrary.BooksApi
 {
-    public interface BooksOpenApi
+    public interface IBooksOpenApi
     {
-        Task<BookDetails> QueryIsbnAsync(string isbn);
+        Task<BookDetails> QueryIsbnAsync(Isbn isbn);
     }
 }
