@@ -1,107 +1,112 @@
-﻿using System.Collections.Generic;
-
-namespace RaLibrary.Utils
+﻿namespace RaLibrary.Utils
 {
     public class Isbn
     {
-        private string isbn;
+        #region Fields
+
+        private string _isbn;
+
+        private string _normalizedIsbn;
+
+        #endregion Fields
+
+        #region Constructors
 
         public Isbn(string isbn)
         {
-            if (!IsValid(isbn))
+            if (IsValidIsbnTen(isbn) || IsValidIsbnThirteen(isbn))
+            {
+                _isbn = isbn;
+            }
+            else
             {
                 throw new IsbnFormatException();
             }
-            else
-            {
-                this.isbn = isbn;
-            }
         }
 
-        public string NormalizedValue
+        #endregion Constructors
+
+        #region Properties
+
+        public string NormalizedIsbn
         {
             get
             {
-                return Normalize(isbn);
+                if (_normalizedIsbn == null && !string.IsNullOrWhiteSpace(_isbn))
+                {
+                    _normalizedIsbn = _isbn.ToUpper();
+                }
+
+                return _normalizedIsbn;
             }
         }
 
-        private string Normalize(string isbn)
-        {
-            List<char> digits = new List<char>();
+        #endregion Properties
 
-            if (string.IsNullOrWhiteSpace(isbn))
+        public static bool IsValidIsbn(string isbn)
+        {
+            return IsValidIsbnTen(isbn) || IsValidIsbnThirteen(isbn);
+        }
+
+        public static bool IsValidIsbnTen(string isbn)
+        {
+            // We'll ignore the null or empty isbn validation.
+            if (string.IsNullOrEmpty(isbn))
             {
-                return string.Empty;
+                return true;
             }
             else
             {
-                for (int i = 0; i < isbn.Length; i++)
+                int length = isbn.Length - 1;
+                int counter = 10;
+                int sum = 0;
+                if (isbn[length] == 'x' || isbn[length] == 'X')
                 {
-                    if ((isbn[i] >= '0' && isbn[i] <= '9')
-                        || isbn[i] == 'x'
-                        || isbn[i] == 'X')
-                    {
-                        digits.Add(isbn[i]);
-                    }
+                    length -= 1;
+                    sum = 10;
                 }
 
-                return string.Join("", digits).ToUpper();
+                for (int i = 0; i <= length; i++)
+                {
+                    if (isbn[i] < '0' || isbn[i] > '9')
+                    {
+                        return false;
+                    }
+                    sum += (isbn[i] - '0') * counter;
+                    counter -= 1;
+                }
+
+                return sum % 11 == 0;
             }
         }
 
-        private bool IsValid(string isbn)
+        public static bool IsValidIsbnThirteen(string isbn)
         {
-            if (string.IsNullOrWhiteSpace(isbn))
+            // We'll ignore the null or empty isbn validation.
+            if (string.IsNullOrEmpty(isbn))
             {
-                return false;
+                return true;
             }
-
-            string normalizedIsbn = Normalize(isbn);
-            int length = normalizedIsbn.Length - 1;
-            int counter = 0;
-            int sum = 0;
-
-            switch (normalizedIsbn.Length)
+            else
             {
-                case 10:
-                    {
-                        if (normalizedIsbn[length] == 'x' || normalizedIsbn[length] == 'X')
-                        {
-                            length -= 1;
-                            sum = 10;
-                        }
+                int length = isbn.Length - 1;
+                int counter = 10;
+                int sum = 0;
 
-                        counter = 10;
-                        for (int i = 0; i <= length; i++)
-                        {
-                            if (normalizedIsbn[i] < '0' || normalizedIsbn[i] > '9')
-                            {
-                                continue;
-                            }
-                            sum += (normalizedIsbn[i] - '0') * counter;
-                            counter -= 1;
-                        }
-                        return sum % 11 == 0; // Divisible by 11.
-                    }
-                case 13:
+                const int one = 1, three = 3;
+                counter = one;
+                for (int i = 0; i <= length; i++)
+                {
+                    if (isbn[i] < '0' || isbn[i] > '9')
                     {
-                        const int one = 1, three = 3;
-                        counter = one;
-                        for (int i = 0; i <= length; i++)
-                        {
-                            if (normalizedIsbn[i] < '0' || normalizedIsbn[i] > '9')
-                            {
-                                continue;
-                            }
-                            sum += (normalizedIsbn[i] - '0') * counter;
-                            counter = (counter == one) ? three : one;
-                        }
-                        return sum % 10 == 0; // Divisible by 10.
+                        return false;
                     }
+                    sum += (isbn[i] - '0') * counter;
+                    counter = (counter == one) ? three : one;
+                }
+
+                return sum % 10 == 0; // Divisible by 10.
             }
-
-            return false;
         }
     }
 }

@@ -13,7 +13,7 @@ namespace RaLibrary.BooksApi
 
         public async Task<BookDetails> QueryIsbnAsync(Isbn isbn)
         {
-            string requestUri = baseRequestUri + isbn.NormalizedValue;
+            string requestUri = baseRequestUri + isbn.NormalizedIsbn;
             HttpResponseMessage response = await httpClient.GetAsync(requestUri);
 
             try

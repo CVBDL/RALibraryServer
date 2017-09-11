@@ -75,7 +75,7 @@ namespace RaLibrary.Controllers
             try
             {
                 Isbn isbn10 = new Isbn(book.ISBN10);
-                book.ISBN10 = isbn10.NormalizedValue;
+                book.ISBN10 = isbn10.NormalizedIsbn;
             }
             catch (IsbnFormatException)
             {
@@ -85,7 +85,7 @@ namespace RaLibrary.Controllers
             try
             {
                 Isbn isbn13 = new Isbn(book.ISBN13);
-                book.ISBN13 = isbn13.NormalizedValue;
+                book.ISBN13 = isbn13.NormalizedIsbn;
             }
             catch (IsbnFormatException)
             {
@@ -133,7 +133,7 @@ namespace RaLibrary.Controllers
             try
             {
                 Isbn isbn10 = new Isbn(book.ISBN10);
-                book.ISBN10 = isbn10.NormalizedValue;
+                book.ISBN10 = isbn10.NormalizedIsbn;
             }
             catch (IsbnFormatException)
             {
@@ -143,7 +143,7 @@ namespace RaLibrary.Controllers
             try
             {
                 Isbn isbn13 = new Isbn(book.ISBN13);
-                book.ISBN13 = isbn13.NormalizedValue;
+                book.ISBN13 = isbn13.NormalizedIsbn;
             }
             catch (IsbnFormatException)
             {

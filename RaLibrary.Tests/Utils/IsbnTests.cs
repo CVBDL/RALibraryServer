@@ -62,10 +62,14 @@ namespace RaLibrary.Tests.Utils
             Isbn isbn;
             try
             {
-                isbn = new Isbn("ISBN0-9752298-0-X");
-                isbn = new Isbn("ISBN1-84356-028-3");
-                isbn = new Isbn("ISBN0-19-852663-6");
-                isbn = new Isbn("ISBN 1 86197 271 7");
+                isbn = new Isbn(null);
+                isbn = new Isbn("");
+                isbn = new Isbn(string.Empty);
+                isbn = new Isbn("097522980x");
+                isbn = new Isbn("097522980X");
+                isbn = new Isbn("1843560283");
+                isbn = new Isbn("0198526636");
+                isbn = new Isbn("1861972717");
             }
             catch (IsbnFormatException)
             {
@@ -99,8 +103,12 @@ namespace RaLibrary.Tests.Utils
             Isbn isbn;
             try
             {
-                isbn = new Isbn("978-0-306-40615-7");
-                isbn = new Isbn("978-1-86197-876-9");
+                isbn = new Isbn(null);
+                isbn = new Isbn("");
+                isbn = new Isbn(string.Empty);
+
+                isbn = new Isbn("9780306406157");
+                isbn = new Isbn("9781861978769");
                 isbn = new Isbn("9787550263284");
             }
             catch (IsbnFormatException)
@@ -122,25 +130,19 @@ namespace RaLibrary.Tests.Utils
         }
 
         [TestMethod]
-        public void NormalizedValueTest()
+        public void NormalizedIsbnTest()
         {
             Isbn isbn;
             try
             {
-                isbn = new Isbn("ISBN0-9752298-0-X");
-                Assert.AreEqual("097522980X", isbn.NormalizedValue);
+                isbn = new Isbn("097522980x");
+                Assert.AreEqual("097522980X", isbn.NormalizedIsbn);
 
-                isbn = new Isbn("ISBN1-84356-028-3");
-                Assert.AreEqual("1843560283", isbn.NormalizedValue);
+                isbn = new Isbn("097522980X");
+                Assert.AreEqual("097522980X", isbn.NormalizedIsbn);
 
-                isbn = new Isbn("ISBN 1 86197 271 7");
-                Assert.AreEqual("1861972717", isbn.NormalizedValue);
-
-                isbn = new Isbn("ISBN978-0-306-40615-7");
-                Assert.AreEqual("9780306406157", isbn.NormalizedValue);
-
-                isbn = new Isbn("9787550263284");
-                Assert.AreEqual("9787550263284", isbn.NormalizedValue);
+                isbn = new Isbn("1843560283");
+                Assert.AreEqual("1843560283", isbn.NormalizedIsbn);
             }
             catch (IsbnFormatException)
             {
@@ -149,18 +151,70 @@ namespace RaLibrary.Tests.Utils
         }
 
         [TestMethod]
-        public void NormalizedValueUppercaseTest()
+        public void ValidIsbnTenTest()
         {
-            Isbn isbn;
-            try
-            {
-                isbn = new Isbn("ISBN0-9752298-0-x");
-                Assert.AreEqual("097522980X", isbn.NormalizedValue);
-            }
-            catch (IsbnFormatException)
-            {
-                Assert.Fail();
-            }
+            // Valid ISBN 10
+            Assert.IsTrue(Isbn.IsValidIsbnTen(null));
+            Assert.IsTrue(Isbn.IsValidIsbnTen(""));
+            Assert.IsTrue(Isbn.IsValidIsbnTen(string.Empty));
+
+            Assert.IsTrue(Isbn.IsValidIsbnTen("097522980x"));
+            Assert.IsTrue(Isbn.IsValidIsbnTen("097522980X"));
+            Assert.IsTrue(Isbn.IsValidIsbnTen("1843560283"));
+            Assert.IsTrue(Isbn.IsValidIsbnTen("0198526636"));
+            Assert.IsTrue(Isbn.IsValidIsbnTen("1861972717"));
+        }
+
+        [TestMethod]
+        public void InvalidIsbnTenTest()
+        {
+            // Invalid ISBN 10
+            Assert.IsFalse(Isbn.IsValidIsbnTen("0975229804"));
+            Assert.IsFalse(Isbn.IsValidIsbnTen("4861972717"));
+            Assert.IsFalse(Isbn.IsValidIsbnTen("0 - 9752298 - 0 - 4"));
+            Assert.IsFalse(Isbn.IsValidIsbnTen("A 0975229804"));
+        }
+
+        [TestMethod]
+        public void ValidIsbnThirteenTest()
+        {
+            // Valid ISBN 13
+            Assert.IsTrue(Isbn.IsValidIsbnThirteen(null));
+            Assert.IsTrue(Isbn.IsValidIsbnThirteen(""));
+            Assert.IsTrue(Isbn.IsValidIsbnThirteen(string.Empty));
+
+            Assert.IsTrue(Isbn.IsValidIsbnThirteen("9780306406157"));
+            Assert.IsTrue(Isbn.IsValidIsbnThirteen("9781861978769"));
+            Assert.IsTrue(Isbn.IsValidIsbnThirteen("9787550263284"));
+        }
+
+        [TestMethod]
+        public void InvalidIsbnThirteenTest()
+        {
+            // Invalid ISBN 13
+            Assert.IsFalse(Isbn.IsValidIsbnThirteen("978-1-86197-876-8"));
+            Assert.IsFalse(Isbn.IsValidIsbnThirteen("9781861978768"));
+        }
+
+        [TestMethod]
+        public void ValidIsbnTest()
+        {
+            Assert.IsTrue(Isbn.IsValidIsbn(null));
+            Assert.IsTrue(Isbn.IsValidIsbn(""));
+            Assert.IsTrue(Isbn.IsValidIsbn(string.Empty));
+
+            Assert.IsTrue(Isbn.IsValidIsbn("097522980x"));
+            Assert.IsTrue(Isbn.IsValidIsbn("097522980X"));
+            Assert.IsTrue(Isbn.IsValidIsbn("1861972717"));
+
+            Assert.IsTrue(Isbn.IsValidIsbn("9780306406157"));
+            Assert.IsTrue(Isbn.IsValidIsbn("9781861978769"));
+            Assert.IsTrue(Isbn.IsValidIsbn("9787550263284"));
+
+            Assert.IsFalse(Isbn.IsValidIsbn("0-9752298-0-4"));
+            Assert.IsFalse(Isbn.IsValidIsbn("4 86197 271 7"));
+
+            Assert.IsFalse(Isbn.IsValidIsbn("978-1-86197-876-8"));
         }
     }
 }
