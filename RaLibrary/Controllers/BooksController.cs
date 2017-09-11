@@ -79,7 +79,7 @@ namespace RaLibrary.Controllers
             }
             catch (IsbnFormatException)
             {
-                return BadRequest("Invalid ISBN 10.");
+                return BadRequest("Invalid ISBN10 format.");
             }
 
             try
@@ -89,7 +89,7 @@ namespace RaLibrary.Controllers
             }
             catch (IsbnFormatException)
             {
-                return BadRequest("Invalid ISBN 13.");
+                return BadRequest("Invalid ISBN13 format.");
             }
 
             db.Entry(book).State = EntityState.Modified;

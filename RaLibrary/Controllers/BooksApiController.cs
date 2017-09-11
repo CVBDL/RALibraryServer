@@ -22,7 +22,7 @@ namespace RaLibrary.Controllers
             }
             catch (IsbnFormatException)
             {
-                return BadRequest("Invalid ISBN.");
+                return BadRequest("Invalid ISBN format.");
             }
 
             BookDetails bookDetails;

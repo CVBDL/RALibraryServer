@@ -113,7 +113,6 @@ namespace RaLibrary.Tests.Utils
         public void InvalidIsbn13Test()
         {
             Isbn isbn;
-
             try
             {
                 isbn = new Isbn("978-1-86197-876-8");
@@ -126,7 +125,6 @@ namespace RaLibrary.Tests.Utils
         public void NormalizedValueTest()
         {
             Isbn isbn;
-
             try
             {
                 isbn = new Isbn("ISBN0-9752298-0-X");
@@ -154,7 +152,6 @@ namespace RaLibrary.Tests.Utils
         public void NormalizedValueUppercaseTest()
         {
             Isbn isbn;
-
             try
             {
                 isbn = new Isbn("ISBN0-9752298-0-x");
