@@ -113,6 +113,9 @@
     <Compile Include="Results\AddChallengeOnUnauthorizedResult.cs" />
     <Compile Include="Results\AuthenticationFailureResult.cs" />
     <Compile Include="Utils\IsbnFormatException.cs" />
+    <Compile Include="Utils\IsbnTenAttribute.cs" />
+    <Compile Include="Utils\IsbnThirteenAttribute.cs" />
+    <Compile Include="Utils\IsbnType.cs" />
     <Compile Include="Utils\Jwt.cs" />
     <Compile Include="Utils\JwtPayload.cs" />
   </ItemGroup>
@@ -140,7 +143,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>32140</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

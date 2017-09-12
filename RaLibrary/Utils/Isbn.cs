@@ -6,7 +6,8 @@
 
         private string _isbn;
 
-        private string _normalizedIsbn;
+        private string _normalizedValue;
+        private IsbnType _type;
 
         #endregion Fields
 
@@ -14,11 +15,9 @@
 
         public Isbn(string isbn)
         {
-            if (IsValidIsbnTen(isbn) || IsValidIsbnThirteen(isbn))
-            {
-                _isbn = isbn;
-            }
-            else
+            _isbn = isbn;
+
+            if (!IsValidIsbnTen() && !IsValidIsbnThirteen())
             {
                 throw new IsbnFormatException();
             }
@@ -28,39 +27,66 @@
 
         #region Properties
 
-        public string NormalizedIsbn
+        public string NormalizedValue
         {
             get
             {
-                if (_normalizedIsbn == null && !string.IsNullOrWhiteSpace(_isbn))
+                if (_normalizedValue == null && !string.IsNullOrWhiteSpace(_isbn))
                 {
-                    _normalizedIsbn = _isbn.ToUpper();
+                    _normalizedValue = _isbn.ToUpper();
                 }
 
-                return _normalizedIsbn;
+                return _normalizedValue;
+            }
+        }
+
+        public IsbnType Type
+        {
+            get
+            {
+                if (NormalizedValue == null)
+                {
+                    _type = IsbnType.None;
+                    return _type;
+                }
+
+                switch (NormalizedValue.Length)
+                {
+                    case 10:
+                        _type = IsbnType.Ten;
+                        break;
+                    case 13:
+                        _type = IsbnType.Thirteen;
+                        break;
+                    default:
+                        _type = IsbnType.None;
+                        break;
+                }
+
+                return _type;
             }
         }
 
         #endregion Properties
 
-        public static bool IsValidIsbn(string isbn)
+        private bool IsValidIsbnTen()
         {
-            return IsValidIsbnTen(isbn) || IsValidIsbnThirteen(isbn);
-        }
-
-        public static bool IsValidIsbnTen(string isbn)
-        {
-            // We'll ignore the null or empty isbn validation.
-            if (string.IsNullOrEmpty(isbn))
+            // We'll ignore ISBN validation if given null
+            if (_isbn == null)
             {
                 return true;
             }
             else
             {
-                int length = isbn.Length - 1;
+                int length = _isbn.Length - 1;
+                if (length < 0)
+                {
+                    return false;
+                }
+
                 int counter = 10;
                 int sum = 0;
-                if (isbn[length] == 'x' || isbn[length] == 'X')
+                if (_isbn[length] == 'x' || _isbn[length] == 'X')
                 {
                     length -= 1;
                     sum = 10;
@@ -68,11 +94,11 @@
 
                 for (int i = 0; i <= length; i++)
                 {
-                    if (isbn[i] < '0' || isbn[i] > '9')
+                    if (_isbn[i] < '0' || _isbn[i] > '9')
                     {
                         return false;
                     }
-                    sum += (isbn[i] - '0') * counter;
+                    sum += (_isbn[i] - '0') * counter;
                     counter -= 1;
                 }
 
@@ -80,16 +106,21 @@
             }
         }
 
-        public static bool IsValidIsbnThirteen(string isbn)
+        private bool IsValidIsbnThirteen()
         {
-            // We'll ignore the null or empty isbn validation.
-            if (string.IsNullOrEmpty(isbn))
+            // We'll ignore ISBN validation if given null
+            if (_isbn == null)
             {
                 return true;
             }
             else
             {
-                int length = isbn.Length - 1;
+                int length = _isbn.Length - 1;
+                if (length < 0)
+                {
+                    return false;
+                }
+
                 int counter = 10;
                 int sum = 0;
 
@@ -97,11 +128,11 @@
                 counter = one;
                 for (int i = 0; i <= length; i++)
                 {
-                    if (isbn[i] < '0' || isbn[i] > '9')
+                    if (_isbn[i] < '0' || _isbn[i] > '9')
                     {
                         return false;
                     }
-                    sum += (isbn[i] - '0') * counter;
+                    sum += (_isbn[i] - '0') * counter;
                     counter = (counter == one) ? three : one;
                 }
 

@@ -72,26 +72,6 @@ namespace RaLibrary.Controllers
                 return BadRequest();
             }
 
-            try
-            {
-                Isbn isbn10 = new Isbn(book.ISBN10);
-                book.ISBN10 = isbn10.NormalizedIsbn;
-            }
-            catch (IsbnFormatException)
-            {
-                return BadRequest("Invalid ISBN10 format.");
-            }
-
-            try
-            {
-                Isbn isbn13 = new Isbn(book.ISBN13);
-                book.ISBN13 = isbn13.NormalizedIsbn;
-            }
-            catch (IsbnFormatException)
-            {
-                return BadRequest("Invalid ISBN13 format.");
-            }
-
             db.Entry(book).State = EntityState.Modified;
 
             try
@@ -128,26 +108,6 @@ namespace RaLibrary.Controllers
             if (string.IsNullOrWhiteSpace(book.Borrower))
             {
                 book.Borrower = null;
-            }
-
-            try
-            {
-                Isbn isbn10 = new Isbn(book.ISBN10);
-                book.ISBN10 = isbn10.NormalizedIsbn;
-            }
-            catch (IsbnFormatException)
-            {
-                return BadRequest("Invalid ISBN 10.");
-            }
-
-            try
-            {
-                Isbn isbn13 = new Isbn(book.ISBN13);
-                book.ISBN13 = isbn13.NormalizedIsbn;
-            }
-            catch (IsbnFormatException)
-            {
-                return BadRequest("Invalid ISBN 13.");
             }
 
             if (!ModelState.IsValid)
