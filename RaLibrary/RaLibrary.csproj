@@ -90,7 +90,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="BooksApi\BookDetails.cs" />
     <Compile Include="BooksApi\BookNotFoundException.cs" />
-    <Compile Include="BooksApi\BooksOpenApi.cs" />
+    <Compile Include="BooksApi\IBooksOpenApi.cs" />
     <Compile Include="BooksApi\DoubanBook.cs" />
     <Compile Include="BooksApi\DoubanBooksOpenApi.cs" />
     <Compile Include="Utils\Isbn.cs" />
