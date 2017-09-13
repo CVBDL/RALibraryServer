@@ -4,8 +4,8 @@
     {
         static void Main(string[] args)
         {
-            var emailTask = new EmailTask();
-            emailTask.DoTask();
+            var expiredbookTask = new ExpiredBookAlertTask();
+            expiredbookTask.DoTask();
         }
     }
 }

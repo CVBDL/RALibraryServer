@@ -8,9 +8,9 @@ using RaLibrary.Email;
 
 namespace RaLibrary.TaskApp
 {
-    public class EmailTask : IScheduleTask
+    public class ExpiredBookAlertTask : IScheduleTask
     {
-        static ILog log = LogManager.GetLogger(typeof(EmailTask));
+        static ILog log = LogManager.GetLogger(typeof(ExpiredBookAlertTask));
 
         public bool DoTask()
         {

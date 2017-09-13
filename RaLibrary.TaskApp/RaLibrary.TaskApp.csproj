@@ -52,7 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Objects\ExpiredBookInfo.cs" />
-    <Compile Include="Tasks\EmailTask.cs" />
+    <Compile Include="Tasks\ExpiredBookAlertTask.cs" />
     <Compile Include="Tasks\IScheduleTask.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
