@@ -3,7 +3,7 @@ using System;
 using System.Net.Http;
 using System.Text;
 
-namespace RaLibrary.Utils
+namespace RaLibrary.Utilities
 {
     public class Jwt
     {

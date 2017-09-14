@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RaLibrary.Utils
+namespace RaLibrary.Utilities
 {
     public class IsbnFormatException : Exception
     {

@@ -6,7 +6,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RaLibrary.Results
+namespace RaLibrary.Filters.Results
 {
     public class AddChallengeOnUnauthorizedResult : IHttpActionResult
     {

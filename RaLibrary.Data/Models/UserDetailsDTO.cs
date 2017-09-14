@@ -1,4 +1,4 @@
-﻿namespace RaLibrary.Models
+﻿namespace RaLibrary.Data.Models
 {
     public class UserDetailsDTO
     {

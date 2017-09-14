@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RaLibrary.Results
+namespace RaLibrary.Filters.Results
 {
     public class AuthenticationFailureResult : IHttpActionResult
     {

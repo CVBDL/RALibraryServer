@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using RaLibrary.Data.Entities;
 using System.Data.Entity;
-using System.Linq;
-using System.Web;
 
-namespace RaLibrary.Models
+namespace RaLibrary.Data.Context
 {
     public class RaLibraryContext : DbContext
     {
@@ -14,7 +11,7 @@ namespace RaLibrary.Models
         // automatically whenever you change your model schema, please use data migrations.
         // For more information refer to the documentation:
         // http://msdn.microsoft.com/en-us/data/jj591621.aspx
-    
+
         public RaLibraryContext() : base("name=RaLibraryContext") { }
 
         public DbSet<Book> Books { get; set; }

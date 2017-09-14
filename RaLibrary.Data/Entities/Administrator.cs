@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace RaLibrary.Models
+namespace RaLibrary.Data.Entities
 {
     public class Administrator
     {

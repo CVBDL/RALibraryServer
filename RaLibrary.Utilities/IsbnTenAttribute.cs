@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace RaLibrary.Utils
+namespace RaLibrary.Utilities
 {
     public class IsbnTenAttribute : ValidationAttribute
     {

@@ -1,6 +1,7 @@
-﻿using RaLibrary.Filters;
-using RaLibrary.Models;
-using RaLibrary.Utils;
+﻿using RaLibrary.Data.Context;
+using RaLibrary.Data.Entities;
+using RaLibrary.Filters;
+using RaLibrary.Utilities;
 using System;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -10,6 +11,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using RaLibrary.Data.Models;
 
 namespace RaLibrary.Controllers
 {

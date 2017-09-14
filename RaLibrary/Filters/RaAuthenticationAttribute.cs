@@ -1,6 +1,6 @@
-﻿using RaLibrary.Models;
-using RaLibrary.Results;
-using RaLibrary.Utils;
+﻿using RaLibrary.Data.Context;
+using RaLibrary.Filters.Results;
+using RaLibrary.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
