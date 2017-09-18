@@ -1,17 +1,19 @@
 ﻿using Newtonsoft.Json;
+using RaLibrary.BookApiProxy.Exceptions;
+using RaLibrary.BookApiProxy.Models;
 using RaLibrary.Utilities;
 using System.Configuration;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace RaLibrary.BooksApi
+namespace RaLibrary.BookApiProxy.Douban
 {
     public class DoubanBooksOpenApi : IBooksOpenApi
     {
         public static string baseRequestUri = ConfigurationManager.AppSettings.Get("DoubanBooksApiEndpoint");
         public static HttpClient httpClient = new HttpClient();
 
-        public async Task<BookDetails> QueryIsbnAsync(Isbn isbn)
+        public async Task<BookDetailsDto> QueryIsbnAsync(Isbn isbn)
         {
             string requestUri = baseRequestUri + isbn.NormalizedValue;
             HttpResponseMessage response = await httpClient.GetAsync(requestUri);
@@ -40,7 +42,7 @@ namespace RaLibrary.BooksApi
                 pageCount = ushort.Parse(book.pages);
             }
 
-            return new BookDetails()
+            return new BookDetailsDto()
             {
                 ISBN10 = book.isbn10,
                 ISBN13 = book.isbn13,

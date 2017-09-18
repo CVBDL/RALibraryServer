@@ -1,6 +1,6 @@
-﻿namespace RaLibrary.BooksApi
+﻿namespace RaLibrary.BookApiProxy.Models
 {
-    public class BookDetails
+    public class BookDetailsDto
     {
         public string ISBN10 { get; set; }
         public string ISBN13 { get; set; }

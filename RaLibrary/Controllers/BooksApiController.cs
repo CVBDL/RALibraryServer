@@ -1,4 +1,7 @@
-﻿using RaLibrary.BooksApi;
+﻿using RaLibrary.BookApiProxy;
+using RaLibrary.BookApiProxy.Douban;
+using RaLibrary.BookApiProxy.Exceptions;
+using RaLibrary.BookApiProxy.Models;
 using RaLibrary.Utilities;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -11,7 +14,7 @@ namespace RaLibrary.Controllers
     {
         [Route("isbn/{strIsbn}")]
         [HttpGet]
-        [ResponseType(typeof(BookDetails))]
+        [ResponseType(typeof(BookDetailsDto))]
         public async Task<IHttpActionResult> GetBookByIsbn(string strIsbn)
         {
             Isbn isbn;
@@ -24,7 +27,7 @@ namespace RaLibrary.Controllers
                 return BadRequest(e.Message);
             }
 
-            BookDetails bookDetails;
+            BookDetailsDto bookDetails;
             try
             {
                 IBooksOpenApi doubanBooksApi = new DoubanBooksOpenApi();

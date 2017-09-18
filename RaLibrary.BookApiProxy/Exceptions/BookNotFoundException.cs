@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RaLibrary.BooksApi
+namespace RaLibrary.BookApiProxy.Exceptions
 {
     public class BookNotFoundException : Exception
     {

@@ -1,4 +1,4 @@
-﻿namespace RaLibrary.BooksApi
+﻿namespace RaLibrary.BookApiProxy.Douban
 {
     internal class DoubanBook
     {

@@ -81,11 +81,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="BooksApi\BookDetails.cs" />
-    <Compile Include="BooksApi\BookNotFoundException.cs" />
-    <Compile Include="BooksApi\IBooksOpenApi.cs" />
-    <Compile Include="BooksApi\DoubanBook.cs" />
-    <Compile Include="BooksApi\DoubanBooksOpenApi.cs" />
     <Compile Include="Controllers\BooksApiController.cs" />
     <Compile Include="Controllers\BooksController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -113,6 +108,10 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RaLibrary.BookApiProxy\RaLibrary.BookApiProxy.csproj">
+      <Project>{3eaf4789-9896-4093-8694-a03ef5ef9dd1}</Project>
+      <Name>RaLibrary.BookApiProxy</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RaLibrary.Data\RaLibrary.Data.csproj">
       <Project>{97da0d4a-bb33-42df-b20e-2d5379b73d50}</Project>
       <Name>RaLibrary.Data</Name>
