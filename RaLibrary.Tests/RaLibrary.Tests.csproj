@@ -60,10 +60,17 @@
       <Project>{4c2ed55b-2c38-4303-8c71-42ba51d06c2d}</Project>
       <Name>RaLibrary.Email</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RaLibrary.Utilities\RaLibrary.Utilities.csproj">
+      <Project>{ab4c5c86-6324-4b3a-893f-b5dbee480e27}</Project>
+      <Name>RaLibrary.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RaLibrary\RaLibrary.csproj">
       <Project>{69FDFFD9-9163-400D-BE8A-364808A0C9CE}</Project>
       <Name>RaLibrary</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,6 +1,5 @@
 ﻿using RaLibrary.BooksApi;
-using RaLibrary.Utils;
-using System;
+using RaLibrary.Utilities;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -20,9 +19,9 @@ namespace RaLibrary.Controllers
             {
                 isbn = new Isbn(strIsbn);
             }
-            catch (IsbnFormatException)
+            catch (IsbnFormatException e)
             {
-                return BadRequest("Invalid ISBN format.");
+                return BadRequest(e.Message);
             }
 
             BookDetails bookDetails;
@@ -35,7 +34,7 @@ namespace RaLibrary.Controllers
             {
                 return NotFound();
             }
-            catch (Exception)
+            catch
             {
                 return InternalServerError();
             }

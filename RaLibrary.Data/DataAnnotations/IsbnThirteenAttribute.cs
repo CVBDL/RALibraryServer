@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using RaLibrary.Utilities;
+using System.ComponentModel.DataAnnotations;
 
-namespace RaLibrary.Utils
+namespace RaLibrary.Data.DataAnnotations
 {
     public class IsbnThirteenAttribute : ValidationAttribute
     {

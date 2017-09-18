@@ -1,4 +1,4 @@
-﻿namespace RaLibrary.Utils
+﻿namespace RaLibrary.Utilities
 {
     public enum IsbnType
     {

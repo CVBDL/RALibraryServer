@@ -1,4 +1,4 @@
-﻿using RaLibrary.Utils;
+﻿using RaLibrary.Utilities;
 using System.Threading.Tasks;
 
 namespace RaLibrary.BooksApi

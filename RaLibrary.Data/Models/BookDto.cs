@@ -1,48 +1,38 @@
-﻿using RaLibrary.Utils;
+﻿using RaLibrary.Data.DataAnnotations;
+using RaLibrary.Utilities;
+using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace RaLibrary.Models
+namespace RaLibrary.Data.Models
 {
-    public class Book
+    public class BookDto
     {
-        private string _isbn10;
-
         public int Id { get; set; }
         [Required]
-        [MaxLength(50)]
+        [MaxLength(10)]
         public string Code { get; set; }
         [IsbnTen]
-        public string ISBN10
-        {
-            get
-            {
-                return _isbn10;
-            }
-            set
-            {
-                if (value != null)
-                {
-                    _isbn10 = value.ToUpper();
-                }
-                else
-                {
-                    _isbn10 = null;
-                }
-            }
-        }
+        public string ISBN10 { get; set; }
         [IsbnThirteen]
         public string ISBN13 { get; set; }
         [Required]
         [MaxLength(200)]
         public string Title { get; set; }
+        [MaxLength(200)]
         public string Subtitle { get; set; }
+        [MaxLength(100)]
         public string Authors { get; set; }
+        [MaxLength(100)]
         public string Publisher { get; set; }
+        [MaxLength(30)]
         public string PublishedDate { get; set; }
         public string Description { get; set; }
         public int PageCount { get; set; }
+        [MaxLength(200)]
         public string ThumbnailLink { get; set; }
+        public DateTime CreatedDate { get; set; }
         [MaxLength(50)]
         public string Borrower { get; set; }
+        public byte[] RowVersion { get; set; }
     }
 }

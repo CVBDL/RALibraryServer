@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using RaLibrary.Utils;
+using RaLibrary.Utilities;
 using System.Configuration;
 using System.Net.Http;
 using System.Threading.Tasks;

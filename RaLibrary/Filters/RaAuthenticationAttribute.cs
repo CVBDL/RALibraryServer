@@ -1,10 +1,9 @@
-﻿using RaLibrary.Models;
-using RaLibrary.Results;
-using RaLibrary.Utils;
+﻿using RaLibrary.Data.Managers;
+using RaLibrary.Filters.Results;
+using RaLibrary.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -18,7 +17,7 @@ namespace RaLibrary.Filters
 {
     public class RaAuthenticationAttribute : Attribute, IAuthenticationFilter
     {
-        private RaLibraryContext db = new RaLibraryContext();
+        private AdministratorManager administrators = new AdministratorManager();
 
         private string realm = "ralibrary_resources";
 
@@ -101,9 +100,8 @@ namespace RaLibrary.Filters
                 new Claim(ClaimTypes.Name, name),
                 new Claim(ClaimTypes.Email, email)
             };
-
-            bool isAdmin = db.Administrators.Count(admin => admin.Email == email) > 0;
-            if (isAdmin)
+            
+            if (administrators.AdministratorExists(email))
             {
                 claimCollection.Add(new Claim(ClaimTypes.Role, RoleTypes.Administrators));
                 claimCollection.Add(new Claim(ClaimTypes.Role, RoleTypes.NormalUsers));
