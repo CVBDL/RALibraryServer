@@ -5,6 +5,8 @@ using RaLibrary.Data.Models;
 using System;
 using System.Configuration;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -43,7 +45,7 @@ namespace RaLibrary.Data.Managers
             }
             else if (count > 1)
             {
-                throw new InvalidOperationException("Multiple logs exist.");
+                throw new DbOperationException("Multiple logs exist.");
             }
             else
             {
@@ -62,7 +64,7 @@ namespace RaLibrary.Data.Managers
 
             db.Entry(log).State = EntityState.Modified;
 
-            await db.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public async Task<BorrowLog> CreateAsync(int bookId, string borrower)
@@ -82,7 +84,7 @@ namespace RaLibrary.Data.Managers
 
             db.BorrowLogs.Add(borrowLog);
 
-            await db.SaveChangesAsync();
+            await SaveChangesAsync();
 
             return await GetAsync(borrowLog.Id);
         }
@@ -97,7 +99,7 @@ namespace RaLibrary.Data.Managers
 
             db.BorrowLogs.Remove(borrowLog);
 
-            await db.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public BorrowLogDto ToDto(BorrowLog borrowLog)
@@ -117,6 +119,26 @@ namespace RaLibrary.Data.Managers
         private bool BorrowLogExists(int id)
         {
             return db.BorrowLogs.Count(log => log.Id == id) > 0;
+        }
+
+        private async Task SaveChangesAsync()
+        {
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw new DbOperationException("Concurrency updating conflicts detected.");
+            }
+            catch (DbEntityValidationException)
+            {
+                throw new DbOperationException("Validation of database property values failed.");
+            }
+            catch
+            {
+                throw new DbOperationException();
+            }
         }
 
         public void Dispose()

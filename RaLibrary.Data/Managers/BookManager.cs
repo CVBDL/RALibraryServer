@@ -4,6 +4,8 @@ using RaLibrary.Data.Exceptions;
 using RaLibrary.Data.Models;
 using System;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -56,7 +58,7 @@ namespace RaLibrary.Data.Managers
 
             db.Entry(book).State = EntityState.Modified;
 
-            await db.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public async Task UpdateBorrowerAsync(BookDto bookDto)
@@ -73,7 +75,7 @@ namespace RaLibrary.Data.Managers
 
             db.Entry(book).State = EntityState.Modified;
 
-            await db.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public async Task<Book> CreateAsync(BookDto bookDto)
@@ -97,7 +99,7 @@ namespace RaLibrary.Data.Managers
 
             db.Books.Add(book);
 
-            await db.SaveChangesAsync();
+            await SaveChangesAsync();
 
             return await GetAsync(book.Id);
         }
@@ -112,7 +114,7 @@ namespace RaLibrary.Data.Managers
 
             db.Books.Remove(book);
 
-            await db.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public BookDto ToDto(Book book)
@@ -140,6 +142,26 @@ namespace RaLibrary.Data.Managers
         private bool BookExists(int id)
         {
             return db.Books.Count(book => book.Id == id) > 0;
+        }
+
+        private async Task SaveChangesAsync()
+        {
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw new DbOperationException("Concurrency updating conflicts detected.");
+            }
+            catch (DbEntityValidationException)
+            {
+                throw new DbOperationException("Validation of database property values failed.");
+            }
+            catch
+            {
+                throw new DbOperationException();
+            }
         }
 
         public void Dispose()

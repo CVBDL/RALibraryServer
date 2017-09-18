@@ -1,20 +1,15 @@
-﻿using RaLibrary.Data.Context;
-using RaLibrary.Data.Entities;
+﻿using RaLibrary.Data.Entities;
+using RaLibrary.Data.Exceptions;
+using RaLibrary.Data.Managers;
+using RaLibrary.Data.Models;
 using RaLibrary.Filters;
 using RaLibrary.Utilities;
-using System;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using RaLibrary.Data.Models;
-using RaLibrary.Data.Managers;
-using RaLibrary.Data.Exceptions;
-using System.Data.Entity.Validation;
 
 namespace RaLibrary.Controllers
 {
@@ -101,17 +96,13 @@ namespace RaLibrary.Controllers
             {
                 return NotFound();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbOperationException e)
             {
-                return BadRequest("Concurrency updating conflicts detected.");
-            }
-            catch (DbEntityValidationException)
-            {
-                return BadRequest("Validation of database property values failed.");
+                return BadRequest(e.Message);
             }
             catch
             {
-                return BadRequest("An error occurred sending updates to the database.");
+                return InternalServerError();
             }
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -135,10 +126,6 @@ namespace RaLibrary.Controllers
             {
                 return NotFound();
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
 
             if (book.Borrower != GetClaimEmail())
             {
@@ -154,9 +141,9 @@ namespace RaLibrary.Controllers
             {
                 return NotFound();
             }
-            catch (Exception ex)
+            catch (DbOperationException e)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(e.Message);
             }
 
             if (log.Borrower != GetClaimEmail())
@@ -168,9 +155,17 @@ namespace RaLibrary.Controllers
             {
                 await logs.UpdateAsync(log);
             }
-            catch (Exception ex)
+            catch (DbRecordNotFoundException)
             {
-                return BadRequest(ex.Message);
+                return NotFound();
+            }
+            catch (DbOperationException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch
+            {
+                return InternalServerError();
             }
 
             return StatusCode(HttpStatusCode.NoContent);

@@ -3,8 +3,6 @@ using RaLibrary.Data.Exceptions;
 using RaLibrary.Data.Managers;
 using RaLibrary.Data.Models;
 using RaLibrary.Filters;
-using System.Data.Entity.Infrastructure;
-using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -86,17 +84,13 @@ namespace RaLibrary.Controllers
             {
                 return NotFound();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbOperationException e)
             {
-                return BadRequest("Concurrency updating conflicts detected.");
-            }
-            catch (DbEntityValidationException)
-            {
-                return BadRequest("Validation of database property values failed.");
+                return BadRequest(e.Message);
             }
             catch
             {
-                return BadRequest("An error occurred sending updates to the database.");
+                return InternalServerError();
             }
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -129,17 +123,17 @@ namespace RaLibrary.Controllers
             {
                 book = await books.CreateAsync(bookDto);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbRecordNotFoundException)
             {
-                return BadRequest("Concurrency updating conflicts detected.");
+                return NotFound();
             }
-            catch (DbEntityValidationException)
+            catch (DbOperationException e)
             {
-                return BadRequest("Validation of database property values failed.");
+                return BadRequest(e.Message);
             }
             catch
             {
-                return BadRequest("An error occurred sending updates to the database.");
+                return InternalServerError();
             }
 
             BookDto createdBook = books.ToDto(book);
@@ -167,13 +161,13 @@ namespace RaLibrary.Controllers
             {
                 return NotFound();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbOperationException e)
             {
-                return BadRequest("Concurrency updating conflicts detected.");
+                return BadRequest(e.Message);
             }
             catch
             {
-                return BadRequest("An error occurred sending updates to the database.");
+                return InternalServerError();
             }
 
             return StatusCode(HttpStatusCode.NoContent);

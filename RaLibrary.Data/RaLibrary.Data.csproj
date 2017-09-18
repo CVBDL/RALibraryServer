@@ -55,6 +55,7 @@
     <Compile Include="Entities\Administrator.cs" />
     <Compile Include="Entities\Book.cs" />
     <Compile Include="Entities\BorrowLog.cs" />
+    <Compile Include="Exceptions\DbOperationException.cs" />
     <Compile Include="Exceptions\DbRecordNotFoundException.cs" />
     <Compile Include="Managers\AdministratorManager.cs" />
     <Compile Include="Managers\BookManager.cs" />
