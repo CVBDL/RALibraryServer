@@ -94,7 +94,6 @@
     <Compile Include="BooksApi\IBooksOpenApi.cs" />
     <Compile Include="BooksApi\DoubanBook.cs" />
     <Compile Include="BooksApi\DoubanBooksOpenApi.cs" />
-    <Compile Include="Controllers\BookRecordNotFoundException.cs" />
     <Compile Include="Controllers\BooksApiController.cs" />
     <Compile Include="Controllers\BooksController.cs" />
     <Compile Include="Controllers\UserController.cs" />

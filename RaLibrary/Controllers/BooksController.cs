@@ -1,10 +1,10 @@
-﻿using RaLibrary.Data.Context;
-using RaLibrary.Data.Entities;
+﻿using RaLibrary.Data.Entities;
+using RaLibrary.Data.Exceptions;
 using RaLibrary.Data.Managers;
 using RaLibrary.Data.Models;
 using RaLibrary.Filters;
-using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -19,7 +19,6 @@ namespace RaLibrary.Controllers
     [RoutePrefix("api/books")]
     public class BooksController : ApiController
     {
-        private RaLibraryContext db = new RaLibraryContext();
         private BookManager books = new BookManager();
 
         /// <summary>
@@ -28,9 +27,9 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("")]
         [HttpGet]
-        public IQueryable<Book> ListBooks()
+        public IQueryable<BookDto> ListBooks()
         {
-            return books.List();
+            return books.List().Select(book => books.ToDto(book));
         }
 
         /// <summary>
@@ -40,16 +39,20 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("{id:int}", Name = "GetSingleBook")]
         [HttpGet]
-        [ResponseType(typeof(Book))]
+        [ResponseType(typeof(BookDto))]
         public async Task<IHttpActionResult> GetBook(int id)
         {
-            Book book = await books.Get(id);
-            if (book == null)
+            Book book;
+            try
+            {
+                book = await books.GetAsync(id);
+            }
+            catch (DbRecordNotFoundException)
             {
                 return NotFound();
             }
 
-            return Ok(book);
+            return Ok(books.ToDto(book));
         }
 
         /// <summary>
@@ -63,7 +66,7 @@ namespace RaLibrary.Controllers
         [RaAuthentication]
         [RaLibraryAuthorize(Roles = RoleTypes.Administrators)]
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> UpdateBook(int id, BookDTO bookDto)
+        public async Task<IHttpActionResult> UpdateBook(int id, BookDto bookDto)
         {
             if (!ModelState.IsValid)
             {
@@ -72,20 +75,28 @@ namespace RaLibrary.Controllers
 
             if (id != bookDto.Id)
             {
-                return BadRequest();
+                return BadRequest("The book id does not match.");
             }
 
             try
             {
-                await books.Update(id, bookDto);
+                await books.UpdateAsync(id, bookDto);
             }
-            catch (BookRecordNotFoundException)
+            catch (DbRecordNotFoundException)
             {
                 return NotFound();
             }
             catch (DbUpdateConcurrencyException)
             {
-                return BadRequest();
+                return BadRequest("Concurrency updating conflicts detected.");
+            }
+            catch (DbEntityValidationException)
+            {
+                return BadRequest("Validation of database property values failed.");
+            }
+            catch
+            {
+                return BadRequest("An error occurred sending updates to the database.");
             }
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -94,30 +105,46 @@ namespace RaLibrary.Controllers
         /// <summary>
         /// Create a book.
         /// </summary>
-        /// <param name="book">The new book.</param>
+        /// <param name="bookDto">The new book.</param>
         /// <returns></returns>
         [Route("")]
         [HttpPost]
         [RaAuthentication]
         [RaLibraryAuthorize(Roles = RoleTypes.Administrators)]
         [ResponseType(typeof(Book))]
-        public async Task<IHttpActionResult> CreateBook(Book book)
+        public async Task<IHttpActionResult> CreateBook(BookDto bookDto)
         {
-            if (string.IsNullOrWhiteSpace(book.Borrower))
-            {
-                book.Borrower = null;
-            }
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Books.Add(book);
+            if (string.IsNullOrWhiteSpace(bookDto.Borrower))
+            {
+                bookDto.Borrower = null;
+            }
 
-            await db.SaveChangesAsync();
+            Book book;
+            try
+            {
+                book = await books.CreateAsync(bookDto);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return BadRequest("Concurrency updating conflicts detected.");
+            }
+            catch (DbEntityValidationException)
+            {
+                return BadRequest("Validation of database property values failed.");
+            }
+            catch
+            {
+                return BadRequest("An error occurred sending updates to the database.");
+            }
 
-            return CreatedAtRoute("GetSingleBook", new { id = book.Id }, book);
+            BookDto createdBook = books.ToDto(book);
+
+            return CreatedAtRoute("GetSingleBook", new { id = createdBook.Id }, createdBook);
         }
 
         /// <summary>
@@ -132,24 +159,31 @@ namespace RaLibrary.Controllers
         [ResponseType(typeof(Book))]
         public async Task<IHttpActionResult> DeleteBook(int id)
         {
-            Book book = await db.Books.FindAsync(id);
-            if (book == null)
+            try
+            {
+                await books.DeleteAsync(id);
+            }
+            catch (DbRecordNotFoundException)
             {
                 return NotFound();
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                return BadRequest("Concurrency updating conflicts detected.");
+            }
+            catch
+            {
+                return BadRequest("An error occurred sending updates to the database.");
+            }
 
-            db.Books.Remove(book);
-
-            await db.SaveChangesAsync();
-
-            return Ok(book);
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                books.Dispose();
             }
             base.Dispose(disposing);
         }

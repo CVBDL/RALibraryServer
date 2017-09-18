@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using RaLibrary.Data.Models;
+using RaLibrary.Data.Managers;
+using RaLibrary.Data.Exceptions;
+using System.Data.Entity.Validation;
 
 namespace RaLibrary.Controllers
 {
@@ -24,7 +27,9 @@ namespace RaLibrary.Controllers
     [RaLibraryAuthorize(Roles = RoleTypes.NormalUsers)]
     public class UserController : ApiController
     {
-        private RaLibraryContext db = new RaLibraryContext();
+        private BookManager books = new BookManager();
+        private BorrowLogManager logs = new BorrowLogManager();
+        private AdministratorManager administrators = new AdministratorManager();
 
         /// <summary>
         /// Get user details.
@@ -32,9 +37,11 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("details")]
         [HttpGet]
-        public UserDetailsDTO GetUserDetails()
+        public UserDetailsDto GetUserDetails()
         {
             bool isAdmin = false;
+            string email = null;
+            string name = null;
 
             Jwt jwt = Jwt.GetJwtFromRequestHeader(Request);
             if (jwt != null)
@@ -43,19 +50,19 @@ namespace RaLibrary.Controllers
 
                 if (jwtPayload != null)
                 {
-                    string email = jwtPayload.Email;
-
-                    int count = db.Administrators.Count(admin => admin.Email == email);
-                    if (count > 0)
+                    email = jwtPayload.Email;
+                    if (administrators.AdministratorExists(email))
                     {
                         isAdmin = true;
                     }
                 }
             }
 
-            return new UserDetailsDTO
+            return new UserDetailsDto
             {
-                IsAdmin = isAdmin
+                IsAdmin = isAdmin,
+                Email = email,
+                Name = name
             };
         }
 
@@ -66,10 +73,7 @@ namespace RaLibrary.Controllers
         [HttpGet]
         public IQueryable<Book> ListBorrowedBooks()
         {
-            var identity = User.Identity as ClaimsIdentity;
-            var email = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
-
-            return db.Books.Where(book => book.Borrower == email);
+            return books.List().Where(book => book.Borrower == GetClaimEmail());
         }
 
         /// <summary>
@@ -79,38 +83,35 @@ namespace RaLibrary.Controllers
         [Route("books")]
         [HttpPost]
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> BorrowBook(Book book)
+        public async Task<IHttpActionResult> BorrowBook(BookDto bookDto)
         {
-            var identity = User.Identity as ClaimsIdentity;
-            var email = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+            string email = GetClaimEmail();
 
-            BorrowLog borrowLogRecord = new BorrowLog()
+            if (!ModelState.IsValid)
             {
-                F_BookID = book.Id,
-                Borrower = email,
-                BorrowTime = DateTime.UtcNow
-            };
-
-            db.BorrowLogs.Add(borrowLogRecord);
-
-            Book bookRecord = await db.Books.FindAsync(book.Id);
-            if (bookRecord == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                bookRecord.Borrower = email;
-                db.Entry(bookRecord).State = EntityState.Modified;
+                return BadRequest(ModelState);
             }
 
             try
             {
-                await db.SaveChangesAsync();
+                await books.UpdateBorrowerAsync(bookDto);
+                await logs.CreateAsync(bookDto.Id, email);
+            }
+            catch (DbRecordNotFoundException)
+            {
+                return NotFound();
             }
             catch (DbUpdateConcurrencyException)
             {
-                return BadRequest();
+                return BadRequest("Concurrency updating conflicts detected.");
+            }
+            catch (DbEntityValidationException)
+            {
+                return BadRequest("Validation of database property values failed.");
+            }
+            catch
+            {
+                return BadRequest("An error occurred sending updates to the database.");
             }
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -125,35 +126,51 @@ namespace RaLibrary.Controllers
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> ReturnBook(int id)
         {
-            var logRecord = db.BorrowLogs.First(log => log.F_BookID == id && log.ReturnTime == null);
-            if (logRecord == null)
+            Book book;
+            try
+            {
+                book = await books.GetAsync(id);
+            }
+            catch (DbRecordNotFoundException)
             {
                 return NotFound();
             }
-            else
+            catch (Exception ex)
             {
-                logRecord.ReturnTime = DateTime.UtcNow;
-                db.Entry(logRecord).State = EntityState.Modified;
+                return BadRequest(ex.Message);
             }
 
-            var bookRecord = await db.Books.FindAsync(id);
-            if (bookRecord == null)
+            if (book.Borrower != GetClaimEmail())
+            {
+                return BadRequest("This books is borrowed by others.");
+            }
+
+            BorrowLog log;
+            try
+            {
+                log = logs.GetActive(id);
+            }
+            catch (DbRecordNotFoundException)
             {
                 return NotFound();
             }
-            else
+            catch (Exception ex)
             {
-                bookRecord.Borrower = null;
-                db.Entry(bookRecord).State = EntityState.Modified;
+                return BadRequest(ex.Message);
+            }
+
+            if (log.Borrower != GetClaimEmail())
+            {
+                return BadRequest("This books is borrowed by others.");
             }
 
             try
             {
-                await db.SaveChangesAsync();
+                await logs.UpdateAsync(log);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -163,9 +180,18 @@ namespace RaLibrary.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                books.Dispose();
+                logs.Dispose();
+                administrators.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private string GetClaimEmail()
+        {
+            ClaimsIdentity identity = User.Identity as ClaimsIdentity;
+
+            return identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
         }
     }
 }
