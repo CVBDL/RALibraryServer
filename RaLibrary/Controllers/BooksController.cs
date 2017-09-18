@@ -17,7 +17,11 @@ namespace RaLibrary.Controllers
     [RoutePrefix("api/books")]
     public class BooksController : ApiController
     {
+        #region Fields
+
         private BookManager books = new BookManager();
+
+        #endregion Fields
 
         /// <summary>
         /// List all books.
@@ -150,7 +154,7 @@ namespace RaLibrary.Controllers
         [HttpDelete]
         [RaAuthentication]
         [RaLibraryAuthorize(Roles = RoleTypes.Administrators)]
-        [ResponseType(typeof(Book))]
+        [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> DeleteBook(int id)
         {
             try

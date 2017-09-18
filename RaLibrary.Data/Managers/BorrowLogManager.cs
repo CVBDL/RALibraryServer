@@ -116,6 +116,11 @@ namespace RaLibrary.Data.Managers
             };
         }
 
+        public void Dispose()
+        {
+            db.Dispose();
+        }
+
         private bool BorrowLogExists(int id)
         {
             return db.BorrowLogs.Count(log => log.Id == id) > 0;
@@ -139,11 +144,6 @@ namespace RaLibrary.Data.Managers
             {
                 throw new DbOperationException();
             }
-        }
-
-        public void Dispose()
-        {
-            db.Dispose();
         }
     }
 }

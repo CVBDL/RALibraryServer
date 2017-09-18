@@ -6,6 +6,7 @@ namespace RaLibrary.Data.Entities
 {
     public class BorrowLog
     {
+        [Key]
         public int Id { get; set; }
         [ForeignKey("Book")]
         public int F_BookID { get; set; }

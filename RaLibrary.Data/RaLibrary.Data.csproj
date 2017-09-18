@@ -52,6 +52,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context\RaLibraryContext.cs" />
+    <Compile Include="DataAnnotations\IsbnTenAttribute.cs" />
+    <Compile Include="DataAnnotations\IsbnThirteenAttribute.cs" />
     <Compile Include="Entities\Administrator.cs" />
     <Compile Include="Entities\Book.cs" />
     <Compile Include="Entities\BorrowLog.cs" />

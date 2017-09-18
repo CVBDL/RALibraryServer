@@ -139,6 +139,11 @@ namespace RaLibrary.Data.Managers
             };
         }
 
+        public void Dispose()
+        {
+            db.Dispose();
+        }
+
         private bool BookExists(int id)
         {
             return db.Books.Count(book => book.Id == id) > 0;
@@ -162,11 +167,6 @@ namespace RaLibrary.Data.Managers
             {
                 throw new DbOperationException();
             }
-        }
-
-        public void Dispose()
-        {
-            db.Dispose();
         }
     }
 }

@@ -3,7 +3,6 @@ using RaLibrary.Data.Exceptions;
 using RaLibrary.Data.Managers;
 using RaLibrary.Data.Models;
 using RaLibrary.Filters;
-using RaLibrary.Utilities;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
@@ -22,9 +21,13 @@ namespace RaLibrary.Controllers
     [RaLibraryAuthorize(Roles = RoleTypes.NormalUsers)]
     public class UserController : ApiController
     {
+        #region Fields
+
         private BookManager books = new BookManager();
         private BorrowLogManager logs = new BorrowLogManager();
         private AdministratorManager administrators = new AdministratorManager();
+
+        #endregion Fields
 
         /// <summary>
         /// Get user details.
@@ -34,30 +37,14 @@ namespace RaLibrary.Controllers
         [HttpGet]
         public UserDetailsDto GetUserDetails()
         {
-            bool isAdmin = false;
-            string email = null;
-            string name = null;
-
-            Jwt jwt = Jwt.GetJwtFromRequestHeader(Request);
-            if (jwt != null)
-            {
-                JwtPayload jwtPayload = jwt.Payload;
-
-                if (jwtPayload != null)
-                {
-                    email = jwtPayload.Email;
-                    if (administrators.AdministratorExists(email))
-                    {
-                        isAdmin = true;
-                    }
-                }
-            }
+            string email = GetClaimEmail();
+            string name = GetClaimName();
 
             return new UserDetailsDto
             {
-                IsAdmin = isAdmin,
                 Email = email,
-                Name = name
+                Name = name,
+                IsAdmin = administrators.AdministratorExists(email),
             };
         }
 
@@ -68,7 +55,9 @@ namespace RaLibrary.Controllers
         [HttpGet]
         public IQueryable<Book> ListBorrowedBooks()
         {
-            return books.List().Where(book => book.Borrower == GetClaimEmail());
+            string email = GetClaimEmail();
+
+            return books.List().Where(book => book.Borrower == email);
         }
 
         /// <summary>
@@ -80,13 +69,12 @@ namespace RaLibrary.Controllers
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> BorrowBook(BookDto bookDto)
         {
-            string email = GetClaimEmail();
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            string email = GetClaimEmail();
             try
             {
                 await books.UpdateBorrowerAsync(bookDto);
@@ -117,6 +105,8 @@ namespace RaLibrary.Controllers
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> ReturnBook(int id)
         {
+            string email = GetClaimEmail();
+
             Book book;
             try
             {
@@ -127,7 +117,7 @@ namespace RaLibrary.Controllers
                 return NotFound();
             }
 
-            if (book.Borrower != GetClaimEmail())
+            if (book.Borrower != email)
             {
                 return BadRequest("This books is borrowed by others.");
             }
@@ -146,7 +136,7 @@ namespace RaLibrary.Controllers
                 return BadRequest(e.Message);
             }
 
-            if (log.Borrower != GetClaimEmail())
+            if (log.Borrower != email)
             {
                 return BadRequest("This books is borrowed by others.");
             }
@@ -187,6 +177,13 @@ namespace RaLibrary.Controllers
             ClaimsIdentity identity = User.Identity as ClaimsIdentity;
 
             return identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+        }
+
+        private string GetClaimName()
+        {
+            ClaimsIdentity identity = User.Identity as ClaimsIdentity;
+
+            return identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value;
         }
     }
 }

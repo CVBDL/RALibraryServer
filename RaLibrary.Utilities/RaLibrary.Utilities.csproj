@@ -48,8 +48,6 @@
   <ItemGroup>
     <Compile Include="Isbn.cs" />
     <Compile Include="IsbnFormatException.cs" />
-    <Compile Include="IsbnTenAttribute.cs" />
-    <Compile Include="IsbnThirteenAttribute.cs" />
     <Compile Include="IsbnType.cs" />
     <Compile Include="Jwt.cs" />
     <Compile Include="JwtPayload.cs" />

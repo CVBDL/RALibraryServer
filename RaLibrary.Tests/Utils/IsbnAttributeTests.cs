@@ -56,37 +56,37 @@ namespace RaLibrary.Tests.Utils
         //
         #endregion
 
-        [TestMethod]
-        public void Isbn10AttributeTest()
-        {
+        //[TestMethod]
+        //public void Isbn10AttributeTest()
+        //{
 
-            var validation = new IsbnTenAttribute();
+        //    var validation = new IsbnTenAttribute();
 
-            Assert.IsTrue(validation.IsValid(null));
-            Assert.IsTrue(validation.IsValid("097522980X"));
-            Assert.IsTrue(validation.IsValid("097522980x"));
-            Assert.IsTrue(validation.IsValid("1843560283"));
+        //    Assert.IsTrue(validation.IsValid(null));
+        //    Assert.IsTrue(validation.IsValid("097522980X"));
+        //    Assert.IsTrue(validation.IsValid("097522980x"));
+        //    Assert.IsTrue(validation.IsValid("1843560283"));
 
-            Assert.IsFalse(validation.IsValid(""));
-            Assert.IsFalse(validation.IsValid("   "));
-            Assert.IsFalse(validation.IsValid("9780306406157"));
-        }
+        //    Assert.IsFalse(validation.IsValid(""));
+        //    Assert.IsFalse(validation.IsValid("   "));
+        //    Assert.IsFalse(validation.IsValid("9780306406157"));
+        //}
 
-        [TestMethod]
-        public void Isbn13AttributeTest()
-        {
+        //[TestMethod]
+        //public void Isbn13AttributeTest()
+        //{
 
-            var validation = new IsbnThirteenAttribute();
+        //    var validation = new IsbnThirteenAttribute();
 
-            Assert.IsTrue(validation.IsValid(null));
-            Assert.IsTrue(validation.IsValid("9780306406157"));
-            Assert.IsTrue(validation.IsValid("9781861978769"));
-            Assert.IsTrue(validation.IsValid("9787550263284"));
+        //    Assert.IsTrue(validation.IsValid(null));
+        //    Assert.IsTrue(validation.IsValid("9780306406157"));
+        //    Assert.IsTrue(validation.IsValid("9781861978769"));
+        //    Assert.IsTrue(validation.IsValid("9787550263284"));
 
-            Assert.IsFalse(validation.IsValid(""));
-            Assert.IsFalse(validation.IsValid("   "));
-            Assert.IsFalse(validation.IsValid("097522980X"));
-        }
+        //    Assert.IsFalse(validation.IsValid(""));
+        //    Assert.IsFalse(validation.IsValid("   "));
+        //    Assert.IsFalse(validation.IsValid("097522980X"));
+        //}
     }
 }
 
