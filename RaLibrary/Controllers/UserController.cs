@@ -5,7 +5,6 @@ using RaLibrary.Data.Models;
 using RaLibrary.Filters;
 using System.Linq;
 using System.Net;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -19,13 +18,13 @@ namespace RaLibrary.Controllers
     [RoutePrefix("api/user")]
     [RaAuthentication]
     [RaLibraryAuthorize(Roles = RoleTypes.NormalUsers)]
-    public class UserController : ApiController
+    public class UserController : RaLibraryController
     {
         #region Fields
 
-        private BookManager books = new BookManager();
-        private BorrowLogManager logs = new BorrowLogManager();
-        private AdministratorManager administrators = new AdministratorManager();
+        private BookManager _books = new BookManager();
+        private BorrowLogManager _logs = new BorrowLogManager();
+        private AdministratorManager _administrators = new AdministratorManager();
 
         #endregion Fields
 
@@ -37,14 +36,14 @@ namespace RaLibrary.Controllers
         [HttpGet]
         public UserDetailsDto GetUserDetails()
         {
-            string email = GetClaimEmail();
-            string name = GetClaimName();
+            string email = ClaimEmail;
+            string name = ClaimName;
 
             return new UserDetailsDto
             {
                 Email = email,
                 Name = name,
-                IsAdmin = administrators.AdministratorExists(email),
+                IsAdmin = _administrators.AdministratorExists(email),
             };
         }
 
@@ -55,9 +54,9 @@ namespace RaLibrary.Controllers
         [HttpGet]
         public IQueryable<Book> ListBorrowedBooks()
         {
-            string email = GetClaimEmail();
+            string email = ClaimEmail;
 
-            return books.List().Where(book => book.Borrower == email);
+            return _books.List().Where(book => book.Borrower == email);
         }
 
         /// <summary>
@@ -74,11 +73,11 @@ namespace RaLibrary.Controllers
                 return BadRequest(ModelState);
             }
 
-            string email = GetClaimEmail();
+            string email = ClaimEmail;
             try
             {
-                await books.UpdateBorrowerAsync(bookDto);
-                await logs.CreateAsync(bookDto.Id, email);
+                await _books.UpdateBorrowerAsync(bookDto);
+                await _logs.CreateAsync(bookDto.Id, email);
             }
             catch (DbRecordNotFoundException)
             {
@@ -105,12 +104,12 @@ namespace RaLibrary.Controllers
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> ReturnBook(int id)
         {
-            string email = GetClaimEmail();
+            string email = ClaimEmail;
 
             Book book;
             try
             {
-                book = await books.GetAsync(id);
+                book = await _books.GetAsync(id);
             }
             catch (DbRecordNotFoundException)
             {
@@ -125,7 +124,7 @@ namespace RaLibrary.Controllers
             BorrowLog log;
             try
             {
-                log = logs.GetActive(id);
+                log = _logs.GetActive(id);
             }
             catch (DbRecordNotFoundException)
             {
@@ -143,7 +142,7 @@ namespace RaLibrary.Controllers
 
             try
             {
-                await logs.UpdateAsync(log);
+                await _logs.UpdateAsync(log);
             }
             catch (DbRecordNotFoundException)
             {
@@ -165,25 +164,11 @@ namespace RaLibrary.Controllers
         {
             if (disposing)
             {
-                books.Dispose();
-                logs.Dispose();
-                administrators.Dispose();
+                _books.Dispose();
+                _logs.Dispose();
+                _administrators.Dispose();
             }
             base.Dispose(disposing);
-        }
-
-        private string GetClaimEmail()
-        {
-            ClaimsIdentity identity = User.Identity as ClaimsIdentity;
-
-            return identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
-        }
-
-        private string GetClaimName()
-        {
-            ClaimsIdentity identity = User.Identity as ClaimsIdentity;
-
-            return identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name).Value;
         }
     }
 }

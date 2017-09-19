@@ -3,6 +3,7 @@ using RaLibrary.Data.Exceptions;
 using RaLibrary.Data.Managers;
 using RaLibrary.Data.Models;
 using RaLibrary.Filters;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace RaLibrary.Controllers
     /// Books routes.
     /// </summary>
     [RoutePrefix("api/books")]
-    public class BooksController : ApiController
+    public class BooksController : RaLibraryController
     {
         #region Fields
 
