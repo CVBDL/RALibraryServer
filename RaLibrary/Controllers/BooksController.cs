@@ -19,7 +19,7 @@ namespace RaLibrary.Controllers
     {
         #region Fields
 
-        private BookManager books = new BookManager();
+        private BookManager _books = new BookManager();
 
         #endregion Fields
 
@@ -31,7 +31,7 @@ namespace RaLibrary.Controllers
         [HttpGet]
         public IQueryable<BookDto> ListBooks()
         {
-            return books.List().Select(book => books.ToDto(book));
+            return _books.ListAsDto();
         }
 
         /// <summary>
@@ -47,14 +47,14 @@ namespace RaLibrary.Controllers
             Book book;
             try
             {
-                book = await books.GetAsync(id);
+                book = await _books.GetAsync(id);
             }
             catch (DbRecordNotFoundException)
             {
                 return NotFound();
             }
 
-            return Ok(books.ToDto(book));
+            return Ok(_books.ToDto(book));
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace RaLibrary.Controllers
 
             try
             {
-                await books.UpdateAsync(id, bookDto);
+                await _books.UpdateAsync(id, bookDto);
             }
             catch (DbRecordNotFoundException)
             {
@@ -125,7 +125,7 @@ namespace RaLibrary.Controllers
             Book book;
             try
             {
-                book = await books.CreateAsync(bookDto);
+                book = await _books.CreateAsync(bookDto);
             }
             catch (DbRecordNotFoundException)
             {
@@ -140,7 +140,7 @@ namespace RaLibrary.Controllers
                 return InternalServerError();
             }
 
-            BookDto createdBook = books.ToDto(book);
+            BookDto createdBook = _books.ToDto(book);
 
             return CreatedAtRoute("GetSingleBook", new { id = createdBook.Id }, createdBook);
         }
@@ -159,7 +159,7 @@ namespace RaLibrary.Controllers
         {
             try
             {
-                await books.DeleteAsync(id);
+                await _books.DeleteAsync(id);
             }
             catch (DbRecordNotFoundException)
             {
@@ -181,7 +181,7 @@ namespace RaLibrary.Controllers
         {
             if (disposing)
             {
-                books.Dispose();
+                _books.Dispose();
             }
             base.Dispose(disposing);
         }

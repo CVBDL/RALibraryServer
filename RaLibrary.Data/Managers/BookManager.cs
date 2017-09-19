@@ -3,6 +3,7 @@ using RaLibrary.Data.Entities;
 using RaLibrary.Data.Exceptions;
 using RaLibrary.Data.Models;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
@@ -18,6 +19,18 @@ namespace RaLibrary.Data.Managers
         public IQueryable<Book> List()
         {
             return _db.Books;
+        }
+
+        public IQueryable<BookDto> ListAsDto()
+        {
+            List<BookDto> result = new List<BookDto>();
+
+            foreach (Book book in List())
+            {
+                result.Add(ToDto(book));
+            }
+
+            return result.AsQueryable();
         }
 
         public async Task<Book> GetAsync(int id)

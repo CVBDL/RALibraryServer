@@ -23,7 +23,7 @@ namespace RaLibrary.Utilities
         {
             if (!string.IsNullOrWhiteSpace(jwt))
             {
-                this._jwt = jwt;
+                _jwt = jwt;
             }
         }
 
