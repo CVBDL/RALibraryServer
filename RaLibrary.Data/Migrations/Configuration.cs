@@ -1,10 +1,10 @@
+using RaLibrary.Data.Context;
+using RaLibrary.Data.Entities;
+using System;
+using System.Data.Entity.Migrations;
+
 namespace RaLibrary.Migrations
 {
-    using System.Data.Entity.Migrations;
-    using Data.Entities;
-    using Data.Context;
-    using System;
-
     internal sealed class Configuration : DbMigrationsConfiguration<RaLibraryContext>
     {
         public Configuration()

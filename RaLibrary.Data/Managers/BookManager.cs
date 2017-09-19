@@ -13,16 +13,16 @@ namespace RaLibrary.Data.Managers
 {
     public class BookManager
     {
-        private RaLibraryContext db = new RaLibraryContext();
+        private RaLibraryContext _db = new RaLibraryContext();
 
         public IQueryable<Book> List()
         {
-            return db.Books;
+            return _db.Books;
         }
 
         public async Task<Book> GetAsync(int id)
         {
-            Book book = await db.Books.FindAsync(id);
+            Book book = await _db.Books.FindAsync(id);
             if (book == null)
             {
                 throw new DbRecordNotFoundException();
@@ -56,7 +56,7 @@ namespace RaLibrary.Data.Managers
             book.Borrower = bookDto.Borrower;
             book.RowVersion = bookDto.RowVersion;
 
-            db.Entry(book).State = EntityState.Modified;
+            _db.Entry(book).State = EntityState.Modified;
 
             await SaveChangesAsync();
         }
@@ -73,7 +73,7 @@ namespace RaLibrary.Data.Managers
             book.Borrower = bookDto.Borrower;
             book.RowVersion = bookDto.RowVersion;
 
-            db.Entry(book).State = EntityState.Modified;
+            _db.Entry(book).State = EntityState.Modified;
 
             await SaveChangesAsync();
         }
@@ -97,7 +97,7 @@ namespace RaLibrary.Data.Managers
                 CreatedDate = DateTime.UtcNow
             };
 
-            db.Books.Add(book);
+            _db.Books.Add(book);
 
             await SaveChangesAsync();
 
@@ -112,7 +112,7 @@ namespace RaLibrary.Data.Managers
                 throw new DbRecordNotFoundException();
             }
 
-            db.Books.Remove(book);
+            _db.Books.Remove(book);
 
             await SaveChangesAsync();
         }
@@ -141,19 +141,19 @@ namespace RaLibrary.Data.Managers
 
         public void Dispose()
         {
-            db.Dispose();
+            _db.Dispose();
         }
 
         private bool BookExists(int id)
         {
-            return db.Books.Count(book => book.Id == id) > 0;
+            return _db.Books.Count(book => book.Id == id) > 0;
         }
 
         private async Task SaveChangesAsync()
         {
             try
             {
-                await db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {

@@ -10,13 +10,17 @@ namespace RaLibrary.BookApiProxy.Douban
 {
     public class DoubanBooksOpenApi : IBooksOpenApi
     {
-        public static string baseRequestUri = ConfigurationManager.AppSettings.Get("DoubanBooksApiEndpoint");
-        public static HttpClient httpClient = new HttpClient();
+        #region Fields
+
+        private static readonly string s_baseRequestUri = ConfigurationManager.AppSettings.Get("DoubanBooksApiEndpoint");
+        private static readonly HttpClient s_httpClient = new HttpClient();
+
+        #endregion Fields
 
         public async Task<BookDetailsDto> QueryIsbnAsync(Isbn isbn)
         {
-            string requestUri = baseRequestUri + isbn.NormalizedValue;
-            HttpResponseMessage response = await httpClient.GetAsync(requestUri);
+            string requestUri = s_baseRequestUri + isbn.NormalizedValue;
+            HttpResponseMessage response = await s_httpClient.GetAsync(requestUri);
 
             try
             {

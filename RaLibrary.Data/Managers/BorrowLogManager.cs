@@ -14,16 +14,16 @@ namespace RaLibrary.Data.Managers
 {
     public class BorrowLogManager
     {
-        private RaLibraryContext db = new RaLibraryContext();
+        private RaLibraryContext _db = new RaLibraryContext();
 
         public IQueryable<BorrowLog> List()
         {
-            return db.BorrowLogs;
+            return _db.BorrowLogs;
         }
 
         public async Task<BorrowLog> GetAsync(int id)
         {
-            BorrowLog borrowLog = await db.BorrowLogs.FindAsync(id);
+            BorrowLog borrowLog = await _db.BorrowLogs.FindAsync(id);
             if (borrowLog == null)
             {
                 throw new DbRecordNotFoundException();
@@ -36,7 +36,7 @@ namespace RaLibrary.Data.Managers
 
         public BorrowLog GetActive(int bookId)
         {
-            IQueryable<BorrowLog> logs = db.BorrowLogs.Where(log => log.F_BookID == bookId && log.ReturnTime == null);
+            IQueryable<BorrowLog> logs = _db.BorrowLogs.Where(log => log.F_BookID == bookId && log.ReturnTime == null);
 
             int count = logs.Count();
             if (count == 0)
@@ -62,7 +62,7 @@ namespace RaLibrary.Data.Managers
 
             log.ReturnTime = DateTime.UtcNow;
 
-            db.Entry(log).State = EntityState.Modified;
+            _db.Entry(log).State = EntityState.Modified;
 
             await SaveChangesAsync();
         }
@@ -82,7 +82,7 @@ namespace RaLibrary.Data.Managers
                 ReturnTime = null
             };
 
-            db.BorrowLogs.Add(borrowLog);
+            _db.BorrowLogs.Add(borrowLog);
 
             await SaveChangesAsync();
 
@@ -97,7 +97,7 @@ namespace RaLibrary.Data.Managers
                 throw new DbRecordNotFoundException();
             }
 
-            db.BorrowLogs.Remove(borrowLog);
+            _db.BorrowLogs.Remove(borrowLog);
 
             await SaveChangesAsync();
         }
@@ -118,19 +118,19 @@ namespace RaLibrary.Data.Managers
 
         public void Dispose()
         {
-            db.Dispose();
+            _db.Dispose();
         }
 
         private bool BorrowLogExists(int id)
         {
-            return db.BorrowLogs.Count(log => log.Id == id) > 0;
+            return _db.BorrowLogs.Count(log => log.Id == id) > 0;
         }
 
         private async Task SaveChangesAsync()
         {
             try
             {
-                await db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {

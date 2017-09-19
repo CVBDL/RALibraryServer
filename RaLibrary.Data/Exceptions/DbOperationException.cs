@@ -4,9 +4,9 @@ namespace RaLibrary.Data.Exceptions
 {
     public class DbOperationException : Exception
     {
-        private const string msg = "An error occurred when operating database.";
+        private static readonly string s_defaultMessage = "An error occurred when operating database.";
 
-        public DbOperationException() : base(msg) { }
+        public DbOperationException() : base(s_defaultMessage) { }
 
         public DbOperationException(string message) : base(message) { }
     }

@@ -9,16 +9,16 @@ namespace RaLibrary.Data.Managers
 {
     public class AdministratorManager
     {
-        private RaLibraryContext db = new RaLibraryContext();
+        private RaLibraryContext _db = new RaLibraryContext();
 
         public bool AdministratorExists(string email)
         {
-            return db.Administrators.Count(admin => admin.Email == email) > 0;
+            return _db.Administrators.Count(admin => admin.Email == email) > 0;
         }
 
         public void Dispose()
         {
-            db.Dispose();
+            _db.Dispose();
         }
     }
 }

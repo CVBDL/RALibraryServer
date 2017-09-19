@@ -9,11 +9,11 @@ namespace RaLibrary.Utilities
     {
         #region Fields
 
-        public static readonly string TOKEN_TYPE = "Bearer";
-        public static readonly char JWT_SEPARATOR = '.';
+        public static readonly string s_tokenType = "Bearer";
+        public static readonly char s_jwtSeparator = '.';
 
-        private string jwt;
-        private JwtPayload jwtPayload;
+        private string _jwt;
+        private JwtPayload _jwtPayload;
 
         #endregion Fields
 
@@ -23,7 +23,7 @@ namespace RaLibrary.Utilities
         {
             if (!string.IsNullOrWhiteSpace(jwt))
             {
-                this.jwt = jwt;
+                this._jwt = jwt;
             }
         }
 
@@ -35,7 +35,7 @@ namespace RaLibrary.Utilities
         {
             get
             {
-                return jwt;
+                return _jwt;
             }
         }
 
@@ -43,19 +43,19 @@ namespace RaLibrary.Utilities
         {
             get
             {
-                if (jwt == null)
+                if (_jwt == null)
                 {
                     return null;
                 }
 
-                if (jwtPayload != null)
+                if (_jwtPayload != null)
                 {
-                    return jwtPayload;
+                    return _jwtPayload;
                 }
 
                 try
                 {
-                    var payloadBase64String = jwt.Split(JWT_SEPARATOR)[1];
+                    var payloadBase64String = _jwt.Split(s_jwtSeparator)[1];
                     int mod4 = payloadBase64String.Length % 4;
                     if (mod4 > 0)
                     {
@@ -91,7 +91,7 @@ namespace RaLibrary.Utilities
             }
 
             // It only accepts a bearer type token.
-            if (!string.Equals(authorization.Scheme, TOKEN_TYPE, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(authorization.Scheme, s_tokenType, StringComparison.OrdinalIgnoreCase))
             {
                 return null;
             }
@@ -111,14 +111,14 @@ namespace RaLibrary.Utilities
         /// <returns></returns>
         public bool IsValid()
         {
-            if (string.IsNullOrWhiteSpace(jwt))
+            if (string.IsNullOrWhiteSpace(_jwt))
             {
                 return false;
             }
 
             try
             {
-                string[] parts = jwt.Split(JWT_SEPARATOR);
+                string[] parts = _jwt.Split(s_jwtSeparator);
                 if (parts.Length != 3)
                 {
                     return false;
