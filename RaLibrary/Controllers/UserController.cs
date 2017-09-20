@@ -77,7 +77,13 @@ namespace RaLibrary.Controllers
             try
             {
                 await _books.UpdateBorrowerAsync(bookDto);
-                await _logs.CreateAsync(bookDto.Id, email);
+
+                BorrowLogDto borrowLogDto = new BorrowLogDto()
+                {
+                    F_BookID = bookDto.Id,
+                    Borrower = email
+                };
+                await _logs.CreateAsync(borrowLogDto);
             }
             catch (DbRecordNotFoundException)
             {
@@ -121,10 +127,10 @@ namespace RaLibrary.Controllers
                 return BadRequest("This books is borrowed by others.");
             }
 
-            BorrowLog log;
+            BorrowLogDto logDto;
             try
             {
-                log = _logs.GetActive(id);
+                logDto = _logs.GetActive(id);
             }
             catch (DbRecordNotFoundException)
             {
@@ -135,14 +141,14 @@ namespace RaLibrary.Controllers
                 return BadRequest(e.Message);
             }
 
-            if (log.Borrower != email)
+            if (logDto.Borrower != email)
             {
                 return BadRequest("This books is borrowed by others.");
             }
 
             try
             {
-                await _logs.UpdateAsync(log);
+                await _logs.UpdateAsync(logDto);
             }
             catch (DbRecordNotFoundException)
             {
