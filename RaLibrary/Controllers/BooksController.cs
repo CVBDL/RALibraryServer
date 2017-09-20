@@ -3,7 +3,6 @@ using RaLibrary.Data.Exceptions;
 using RaLibrary.Data.Managers;
 using RaLibrary.Data.Models;
 using RaLibrary.Filters;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -32,7 +31,7 @@ namespace RaLibrary.Controllers
         [HttpGet]
         public IQueryable<BookDto> ListBooks()
         {
-            return _books.ListAsDto();
+            return _books.List();
         }
 
         /// <summary>
@@ -45,17 +44,17 @@ namespace RaLibrary.Controllers
         [ResponseType(typeof(BookDto))]
         public async Task<IHttpActionResult> GetBook(int id)
         {
-            Book book;
+            BookDto bookDto;
             try
             {
-                book = await _books.GetAsync(id);
+                bookDto = await _books.GetAsync(id);
             }
             catch (DbRecordNotFoundException)
             {
                 return NotFound();
             }
 
-            return Ok(_books.ToDto(book));
+            return Ok(bookDto);
         }
 
         /// <summary>
@@ -66,9 +65,9 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("{id:int}")]
         [HttpPost]
-        [RaAuthentication]
-        [RaLibraryAuthorize(Roles = RoleTypes.Administrators)]
-        [ResponseType(typeof(void))]
+        //[RaAuthentication]
+        //[RaLibraryAuthorize(Roles = RoleTypes.Administrators)]
+        [ResponseType(typeof(BookDto))]
         public async Task<IHttpActionResult> UpdateBook(int id, BookDto bookDto)
         {
             if (!ModelState.IsValid)
@@ -83,7 +82,11 @@ namespace RaLibrary.Controllers
 
             try
             {
-                await _books.UpdateAsync(id, bookDto);
+                await _books.UpdateAsync(bookDto);
+
+                BookDto updatedBookDto = await _books.GetAsync(bookDto.Id);
+
+                return Ok(updatedBookDto);
             }
             catch (DbRecordNotFoundException)
             {
@@ -97,8 +100,6 @@ namespace RaLibrary.Controllers
             {
                 return InternalServerError();
             }
-
-            return StatusCode(HttpStatusCode.NoContent);
         }
 
         /// <summary>
@@ -123,10 +124,10 @@ namespace RaLibrary.Controllers
                 bookDto.Borrower = null;
             }
 
-            Book book;
+            BookDto createdBook;
             try
             {
-                book = await _books.CreateAsync(bookDto);
+                createdBook = await _books.CreateAsync(bookDto);
             }
             catch (DbRecordNotFoundException)
             {
@@ -140,8 +141,6 @@ namespace RaLibrary.Controllers
             {
                 return InternalServerError();
             }
-
-            BookDto createdBook = _books.ToDto(book);
 
             return CreatedAtRoute("GetSingleBook", new { id = createdBook.Id }, createdBook);
         }

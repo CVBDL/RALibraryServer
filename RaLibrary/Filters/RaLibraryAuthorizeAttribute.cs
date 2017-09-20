@@ -1,5 +1,4 @@
-﻿using RaLibrary.Data.Context;
-using System.Web;
+﻿using System.Web;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 
@@ -7,8 +6,6 @@ namespace RaLibrary.Filters
 {
     public class RaLibraryAuthorizeAttribute : AuthorizeAttribute
     {
-        private RaLibraryContext db = new RaLibraryContext();
-
         protected override bool IsAuthorized(HttpActionContext actionContext)
         {
             if (string.IsNullOrWhiteSpace(Roles))

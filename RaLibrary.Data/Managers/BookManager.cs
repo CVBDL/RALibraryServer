@@ -14,18 +14,17 @@ namespace RaLibrary.Data.Managers
 {
     public class BookManager
     {
+        #region Fields
+
         private RaLibraryContext _db = new RaLibraryContext();
 
-        public IQueryable<Book> List()
-        {
-            return _db.Books;
-        }
+        #endregion Fields
 
-        public IQueryable<BookDto> ListAsDto()
+        public IQueryable<BookDto> List()
         {
             List<BookDto> result = new List<BookDto>();
 
-            foreach (Book book in List())
+            foreach (Book book in _db.Books)
             {
                 result.Add(ToDto(book));
             }
@@ -33,27 +32,16 @@ namespace RaLibrary.Data.Managers
             return result.AsQueryable();
         }
 
-        public async Task<Book> GetAsync(int id)
+        public async Task<BookDto> GetAsync(int id)
         {
-            Book book = await _db.Books.FindAsync(id);
-            if (book == null)
-            {
-                throw new DbRecordNotFoundException();
-            }
-            else
-            {
-                return book;
-            }
+            Book book = await FindAsync(id);
+
+            return ToDto(book);
         }
 
-        public async Task UpdateAsync(int id, BookDto bookDto)
+        public async Task UpdateAsync(BookDto bookDto)
         {
-            if (!BookExists(id))
-            {
-                throw new DbRecordNotFoundException();
-            }
-
-            Book book = await GetAsync(id);
+            Book book = await FindAsync(bookDto.Id);
 
             book.Code = bookDto.Code;
             book.ISBN10 = bookDto.ISBN10;
@@ -67,31 +55,37 @@ namespace RaLibrary.Data.Managers
             book.PageCount = bookDto.PageCount;
             book.ThumbnailLink = bookDto.ThumbnailLink;
             book.Borrower = bookDto.Borrower;
-            book.RowVersion = bookDto.RowVersion;
 
-            _db.Entry(book).State = EntityState.Modified;
+            DbEntityEntry<Book> dbEntry = _db.Entry(book);
+
+            // Enable database update concurrency checking.
+            dbEntry.Property(b => b.RowVersion).OriginalValue = bookDto.RowVersion;
+            dbEntry.Property(b => b.RowVersion).IsModified = true;
+
+            dbEntry.State = EntityState.Modified;
 
             await SaveChangesAsync();
         }
 
         public async Task UpdateBorrowerAsync(BookDto bookDto)
         {
-            if (!BookExists(bookDto.Id))
-            {
-                throw new DbRecordNotFoundException();
-            }
-
-            Book book = await GetAsync(bookDto.Id);
+            Book book = await FindAsync(bookDto.Id);
 
             book.Borrower = bookDto.Borrower;
             book.RowVersion = bookDto.RowVersion;
 
-            _db.Entry(book).State = EntityState.Modified;
+            DbEntityEntry<Book> dbEntry = _db.Entry(book);
+
+            // Enable database update concurrency checking.
+            dbEntry.Property(b => b.RowVersion).OriginalValue = bookDto.RowVersion;
+            dbEntry.Property(b => b.RowVersion).IsModified = true;
+
+            dbEntry.State = EntityState.Modified;
 
             await SaveChangesAsync();
         }
 
-        public async Task<Book> CreateAsync(BookDto bookDto)
+        public async Task<BookDto> CreateAsync(BookDto bookDto)
         {
             Book book = new Book()
             {
@@ -119,7 +113,7 @@ namespace RaLibrary.Data.Managers
 
         public async Task DeleteAsync(int id)
         {
-            Book book = await GetAsync(id);
+            Book book = await FindAsync(id);
             if (book == null)
             {
                 throw new DbRecordNotFoundException();
@@ -130,36 +124,22 @@ namespace RaLibrary.Data.Managers
             await SaveChangesAsync();
         }
 
-        public BookDto ToDto(Book book)
-        {
-            return new BookDto()
-            {
-                Id = book.Id,
-                Code = book.Code,
-                ISBN10 = book.ISBN10,
-                ISBN13 = book.ISBN13,
-                Title = book.Title,
-                Subtitle = book.Subtitle,
-                Authors = book.Authors,
-                Publisher = book.Publisher,
-                PublishedDate = book.PublishedDate,
-                Description = book.Description,
-                PageCount = book.PageCount,
-                ThumbnailLink = book.ThumbnailLink,
-                CreatedDate = book.CreatedDate,
-                Borrower = book.Borrower,
-                RowVersion = book.RowVersion
-            };
-        }
-
         public void Dispose()
         {
             _db.Dispose();
         }
 
-        private bool BookExists(int id)
+        private async Task<Book> FindAsync(int id)
         {
-            return _db.Books.Count(book => book.Id == id) > 0;
+            Book book = await _db.Books.FindAsync(id);
+            if (book == null)
+            {
+                throw new DbRecordNotFoundException();
+            }
+            else
+            {
+                return book;
+            }
         }
 
         private async Task SaveChangesAsync()
@@ -180,6 +160,28 @@ namespace RaLibrary.Data.Managers
             {
                 throw new DbOperationException();
             }
+        }
+
+        private BookDto ToDto(Book book)
+        {
+            return new BookDto()
+            {
+                Id = book.Id,
+                Code = book.Code,
+                ISBN10 = book.ISBN10,
+                ISBN13 = book.ISBN13,
+                Title = book.Title,
+                Subtitle = book.Subtitle,
+                Authors = book.Authors,
+                Publisher = book.Publisher,
+                PublishedDate = book.PublishedDate,
+                Description = book.Description,
+                PageCount = book.PageCount,
+                ThumbnailLink = book.ThumbnailLink,
+                CreatedDate = book.CreatedDate,
+                Borrower = book.Borrower,
+                RowVersion = book.RowVersion
+            };
         }
     }
 }

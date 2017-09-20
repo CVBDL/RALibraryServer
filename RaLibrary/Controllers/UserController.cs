@@ -52,7 +52,7 @@ namespace RaLibrary.Controllers
         /// </summary>
         [Route("books")]
         [HttpGet]
-        public IQueryable<Book> ListBorrowedBooks()
+        public IQueryable<BookDto> ListBorrowedBooks()
         {
             string email = ClaimEmail;
 
@@ -106,17 +106,17 @@ namespace RaLibrary.Controllers
         {
             string email = ClaimEmail;
 
-            Book book;
+            BookDto bookDto;
             try
             {
-                book = await _books.GetAsync(id);
+                bookDto = await _books.GetAsync(id);
             }
             catch (DbRecordNotFoundException)
             {
                 return NotFound();
             }
 
-            if (book.Borrower != email)
+            if (bookDto.Borrower != email)
             {
                 return BadRequest("This books is borrowed by others.");
             }
@@ -168,6 +168,7 @@ namespace RaLibrary.Controllers
                 _logs.Dispose();
                 _administrators.Dispose();
             }
+
             base.Dispose(disposing);
         }
     }

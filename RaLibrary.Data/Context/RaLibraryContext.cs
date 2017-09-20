@@ -3,7 +3,7 @@ using System.Data.Entity;
 
 namespace RaLibrary.Data.Context
 {
-    public class RaLibraryContext : DbContext
+    internal class RaLibraryContext : DbContext
     {
         // You can add custom code to this file. Changes will not be overwritten.
         // 
