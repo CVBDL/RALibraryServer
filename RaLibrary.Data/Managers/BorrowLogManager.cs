@@ -21,6 +21,10 @@ namespace RaLibrary.Data.Managers
 
         #endregion Fields
 
+        /// <summary>
+        /// List all logs from data store.
+        /// </summary>
+        /// <returns></returns>
         public IQueryable<BorrowLogDto> List()
         {
             List<BorrowLogDto> result = new List<BorrowLogDto>();
@@ -33,6 +37,11 @@ namespace RaLibrary.Data.Managers
             return result.AsQueryable();
         }
 
+        /// <summary>
+        /// Get a single log from data store.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<BorrowLogDto> GetAsync(int id)
         {
             BorrowLog borrowLog = await FindAsync(id);
@@ -40,6 +49,11 @@ namespace RaLibrary.Data.Managers
             return ToDto(borrowLog);
         }
 
+        /// <summary>
+        /// Get a log that the associated book is not returned.
+        /// </summary>
+        /// <param name="bookId">The book id.</param>
+        /// <returns></returns>
         public BorrowLogDto GetActive(int bookId)
         {
             IQueryable<BorrowLog> logs = _db.BorrowLogs.Where(log => log.F_BookID == bookId && log.ReturnTime == null);
@@ -59,23 +73,27 @@ namespace RaLibrary.Data.Managers
             }
         }
 
-        public async Task UpdateAsync(BorrowLogDto logDto)
+        /// <summary>
+        /// Fill "ReturnTime" into an existing log, then the log will be "closed".
+        /// </summary>
+        /// <param name="logDto"></param>
+        /// <returns></returns>
+        public async Task CloseAsync(BorrowLogDto logDto)
         {
             BorrowLog borrowLog = await FindAsync(logDto.Id);
 
             borrowLog.ReturnTime = DateTime.UtcNow;
 
-            DbEntityEntry<BorrowLog> dbEntry = _db.Entry(borrowLog);
-
-            // Enable database update concurrency checking.
-            dbEntry.Property(b => b.RowVersion).OriginalValue = logDto.RowVersion;
-            dbEntry.Property(b => b.RowVersion).IsModified = true;
-
-            _db.Entry(borrowLog).State = EntityState.Modified;
+            ModifyDbEntityEntry(borrowLog, logDto.RowVersion);
 
             await SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Create a borrow log.
+        /// </summary>
+        /// <param name="logDto"></param>
+        /// <returns></returns>
         public async Task<BorrowLogDto> CreateAsync(BorrowLogDto logDto)
         {
             int borrowedDays = int.Parse(ConfigurationManager.AppSettings.Get("MaxBookBorrowDays"));
@@ -115,6 +133,17 @@ namespace RaLibrary.Data.Managers
             {
                 return borrowLog;
             }
+        }
+
+        private void ModifyDbEntityEntry(BorrowLog borrowLog, byte[] rowVersion)
+        {
+            DbEntityEntry<BorrowLog> dbEntry = _db.Entry(borrowLog);
+
+            // Enable database update concurrency checking.
+            dbEntry.Property(b => b.RowVersion).OriginalValue = rowVersion;
+            dbEntry.Property(b => b.RowVersion).IsModified = true;
+
+            dbEntry.State = EntityState.Modified;
         }
 
         private async Task SaveChangesAsync()

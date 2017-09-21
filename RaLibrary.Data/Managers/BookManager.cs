@@ -20,6 +20,10 @@ namespace RaLibrary.Data.Managers
 
         #endregion Fields
 
+        /// <summary>
+        /// List all books from data store.
+        /// </summary>
+        /// <returns></returns>
         public IQueryable<BookDto> List()
         {
             List<BookDto> result = new List<BookDto>();
@@ -32,6 +36,11 @@ namespace RaLibrary.Data.Managers
             return result.AsQueryable();
         }
 
+        /// <summary>
+        /// Get a single book from data store.
+        /// </summary>
+        /// <param name="id">The book id.</param>
+        /// <returns></returns>
         public async Task<BookDto> GetAsync(int id)
         {
             Book book = await FindAsync(id);
@@ -39,6 +48,11 @@ namespace RaLibrary.Data.Managers
             return ToDto(book);
         }
 
+        /// <summary>
+        /// Update an existing book.
+        /// </summary>
+        /// <param name="bookDto"></param>
+        /// <returns></returns>
         public async Task<BookDto> UpdateAsync(BookDto bookDto)
         {
             Book book = await FindAsync(bookDto.Id);
@@ -56,38 +70,36 @@ namespace RaLibrary.Data.Managers
             book.ThumbnailLink = bookDto.ThumbnailLink;
             book.Borrower = bookDto.Borrower;
 
-            DbEntityEntry<Book> dbEntry = _db.Entry(book);
-
-            // Enable database update concurrency checking.
-            dbEntry.Property(b => b.RowVersion).OriginalValue = bookDto.RowVersion;
-            dbEntry.Property(b => b.RowVersion).IsModified = true;
-
-            dbEntry.State = EntityState.Modified;
+            ModifyDbEntityEntry(book, bookDto.RowVersion);
 
             await SaveChangesAsync();
 
             return await GetAsync(book.Id);
         }
 
+        /// <summary>
+        /// Only update the borrower field of an existing book.
+        /// </summary>
+        /// <param name="bookDto"></param>
+        /// <returns></returns>
         public async Task<BookDto> UpdateBorrowerAsync(BookDto bookDto)
         {
             Book book = await FindAsync(bookDto.Id);
 
             book.Borrower = bookDto.Borrower;
 
-            DbEntityEntry<Book> dbEntry = _db.Entry(book);
-
-            // Enable database update concurrency checking.
-            dbEntry.Property(b => b.RowVersion).OriginalValue = bookDto.RowVersion;
-            dbEntry.Property(b => b.RowVersion).IsModified = true;
-
-            dbEntry.State = EntityState.Modified;
+            ModifyDbEntityEntry(book, bookDto.RowVersion);
 
             await SaveChangesAsync();
 
             return await GetAsync(book.Id);
         }
 
+        /// <summary>
+        /// Create a book.
+        /// </summary>
+        /// <param name="bookDto"></param>
+        /// <returns></returns>
         public async Task<BookDto> CreateAsync(BookDto bookDto)
         {
             Book book = new Book()
@@ -114,6 +126,11 @@ namespace RaLibrary.Data.Managers
             return await GetAsync(book.Id);
         }
 
+        /// <summary>
+        /// Delete an existing book.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task DeleteAsync(int id)
         {
             Book book = await FindAsync(id);
@@ -143,6 +160,22 @@ namespace RaLibrary.Data.Managers
             {
                 return book;
             }
+        }
+
+        private void ModifyDbEntityEntry(Book book)
+        {
+            _db.Entry(book).State = EntityState.Modified;
+        }
+
+        private void ModifyDbEntityEntry(Book book, byte[] rowVersion)
+        {
+            DbEntityEntry<Book> dbEntry = _db.Entry(book);
+
+            // Enable database update concurrency checking.
+            dbEntry.Property(b => b.RowVersion).OriginalValue = rowVersion;
+            dbEntry.Property(b => b.RowVersion).IsModified = true;
+
+            dbEntry.State = EntityState.Modified;
         }
 
         private async Task SaveChangesAsync()

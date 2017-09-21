@@ -43,7 +43,7 @@ namespace RaLibrary.Controllers
             {
                 Email = email,
                 Name = name,
-                IsAdmin = _administrators.AdministratorExists(email),
+                IsAdmin = _administrators.IsAdministrator(email),
             };
         }
 
@@ -161,7 +161,7 @@ namespace RaLibrary.Controllers
 
             try
             {
-                await _logs.UpdateAsync(logDto);
+                await _logs.CloseAsync(logDto);
 
                 return StatusCode(HttpStatusCode.NoContent);
             }

@@ -101,7 +101,7 @@ namespace RaLibrary.Filters
                 new Claim(ClaimTypes.Email, email)
             };
             
-            if (administrators.AdministratorExists(email))
+            if (administrators.IsAdministrator(email))
             {
                 claimCollection.Add(new Claim(ClaimTypes.Role, RoleTypes.Administrators));
                 claimCollection.Add(new Claim(ClaimTypes.Role, RoleTypes.NormalUsers));

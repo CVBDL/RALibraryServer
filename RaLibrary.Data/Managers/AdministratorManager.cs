@@ -5,9 +5,13 @@ namespace RaLibrary.Data.Managers
 {
     public class AdministratorManager
     {
+        #region Fields
+
         private RaLibraryContext _db = new RaLibraryContext();
 
-        public bool AdministratorExists(string email)
+        #endregion Fields
+
+        public bool IsAdministrator(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
             {
