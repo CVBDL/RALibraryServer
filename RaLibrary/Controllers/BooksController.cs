@@ -19,7 +19,7 @@ namespace RaLibrary.Controllers
     {
         #region Fields
 
-        private BookManager _books = new BookManager();
+        private IBookManager _books = new BookManager();
 
         #endregion Fields
 

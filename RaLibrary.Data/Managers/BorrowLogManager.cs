@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace RaLibrary.Data.Managers
 {
-    public class BorrowLogManager
+    public class BorrowLogManager : IBorrowLogManager
     {
         #region Fields
 

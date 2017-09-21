@@ -1,9 +1,10 @@
 ﻿using RaLibrary.Data.Context;
+using System;
 using System.Linq;
 
 namespace RaLibrary.Data.Managers
 {
-    public class AdministratorManager
+    public class AdministratorManager : IAdministratorManager
     {
         #region Fields
 

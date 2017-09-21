@@ -17,7 +17,7 @@ namespace RaLibrary.Filters
 {
     public class RaAuthenticationAttribute : Attribute, IAuthenticationFilter
     {
-        private AdministratorManager administrators = new AdministratorManager();
+        private IAdministratorManager administrators = new AdministratorManager();
 
         private string realm = "ralibrary_resources";
 

@@ -22,9 +22,9 @@ namespace RaLibrary.Controllers
     {
         #region Fields
 
-        private BookManager _books = new BookManager();
-        private BorrowLogManager _logs = new BorrowLogManager();
-        private AdministratorManager _administrators = new AdministratorManager();
+        private IBookManager _books = new BookManager();
+        private IBorrowLogManager _logs = new BorrowLogManager();
+        private IAdministratorManager _administrators = new AdministratorManager();
 
         #endregion Fields
 

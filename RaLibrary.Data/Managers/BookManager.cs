@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace RaLibrary.Data.Managers
 {
-    public class BookManager
+    public class BookManager : IBookManager
     {
         #region Fields
 

@@ -62,6 +62,9 @@
     <Compile Include="Managers\AdministratorManager.cs" />
     <Compile Include="Managers\BookManager.cs" />
     <Compile Include="Managers\BorrowLogManager.cs" />
+    <Compile Include="Managers\IAdministratorManager.cs" />
+    <Compile Include="Managers\IBookManager.cs" />
+    <Compile Include="Managers\IBorrowLogManager.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BookDto.cs" />
     <Compile Include="Models\BorrowLogDto.cs" />
