@@ -37,6 +37,31 @@ namespace RaLibrary.Data.Managers
         }
 
         /// <summary>
+        /// List books of a specified borrower.
+        /// </summary>
+        /// <param name="borrowerEmail">Borrower email address.</param>
+        /// <returns></returns>
+        public IQueryable<BookDto> List(string borrowerEmail)
+        {
+            if (string.IsNullOrWhiteSpace(borrowerEmail))
+            {
+                return List();
+            }
+
+            IQueryable<Book> books = _db.BorrowLogs
+                .Where(r => r.Borrower == borrowerEmail && r.ReturnTime == null)
+                .Select(log => log.Book);
+
+            List<BookDto> result = new List<BookDto>();
+            foreach (Book book in books)
+            {
+                result.Add(ToDto(book));
+            }
+
+            return result.AsQueryable();
+        }
+
+        /// <summary>
         /// Get a single book from data store.
         /// </summary>
         /// <param name="id">The book id.</param>
@@ -68,25 +93,6 @@ namespace RaLibrary.Data.Managers
             book.Description = bookDto.Description;
             book.PageCount = bookDto.PageCount;
             book.ThumbnailLink = bookDto.ThumbnailLink;
-            book.Borrower = bookDto.Borrower;
-
-            ModifyDbEntityEntry(book, bookDto.RowVersion);
-
-            await SaveChangesAsync();
-
-            return await GetAsync(book.Id);
-        }
-
-        /// <summary>
-        /// Only update the borrower field of an existing book.
-        /// </summary>
-        /// <param name="bookDto"></param>
-        /// <returns></returns>
-        public async Task<BookDto> UpdateBorrowerAsync(BookDto bookDto)
-        {
-            Book book = await FindAsync(bookDto.Id);
-
-            book.Borrower = bookDto.Borrower;
 
             ModifyDbEntityEntry(book, bookDto.RowVersion);
 
@@ -115,7 +121,6 @@ namespace RaLibrary.Data.Managers
                 Description = bookDto.Description,
                 PageCount = bookDto.PageCount,
                 ThumbnailLink = bookDto.ThumbnailLink,
-                Borrower = bookDto.Borrower,
                 CreatedDate = DateTime.UtcNow
             };
 
@@ -200,6 +205,9 @@ namespace RaLibrary.Data.Managers
 
         private BookDto ToDto(Book book)
         {
+            bool isBorrowed = _db.BorrowLogs
+                .Count(r => r.F_BookID == book.Id && r.ReturnTime == null) > 0;
+
             return new BookDto()
             {
                 Id = book.Id,
@@ -215,7 +223,7 @@ namespace RaLibrary.Data.Managers
                 PageCount = book.PageCount,
                 ThumbnailLink = book.ThumbnailLink,
                 CreatedDate = book.CreatedDate,
-                Borrower = book.Borrower,
+                IsBorrowed = isBorrowed,
                 RowVersion = book.RowVersion
             };
         }

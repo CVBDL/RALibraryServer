@@ -116,11 +116,6 @@ namespace RaLibrary.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (string.IsNullOrWhiteSpace(bookDto.Borrower))
-            {
-                bookDto.Borrower = null;
-            }
-
             try
             {
                 BookDto resultDto = await _books.CreateAsync(bookDto);

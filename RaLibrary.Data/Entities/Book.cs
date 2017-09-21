@@ -30,8 +30,6 @@ namespace RaLibrary.Data.Entities
         [MaxLength(200)]
         public string ThumbnailLink { get; set; }
         public DateTime CreatedDate { get; set; }
-        [MaxLength(50)]
-        public string Borrower { get; set; }
         [Timestamp]
         public byte[] RowVersion { get; set; }
     }

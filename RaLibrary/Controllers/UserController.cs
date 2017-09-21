@@ -60,7 +60,7 @@ namespace RaLibrary.Controllers
                 return new List<BookDto>().AsQueryable();
             }
 
-            return _books.List().Where(book => book.Borrower == email);
+            return _books.List(email);
         }
 
         /// <summary>
@@ -85,8 +85,6 @@ namespace RaLibrary.Controllers
 
             try
             {
-                await _books.UpdateBorrowerAsync(bookDto);
-
                 BorrowLogDto borrowLogDto = new BorrowLogDto()
                 {
                     F_BookID = bookDto.Id,
@@ -123,21 +121,6 @@ namespace RaLibrary.Controllers
             if (string.IsNullOrWhiteSpace(email))
             {
                 return BadRequest("Cannot identify you.");
-            }
-
-            BookDto bookDto;
-            try
-            {
-                bookDto = await _books.GetAsync(id);
-            }
-            catch (DbRecordNotFoundException)
-            {
-                return NotFound();
-            }
-
-            if (bookDto.Borrower != email)
-            {
-                return BadRequest("This books is borrowed by others.");
             }
 
             BorrowLogDto logDto;
