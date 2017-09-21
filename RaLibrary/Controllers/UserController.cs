@@ -1,8 +1,8 @@
-﻿using RaLibrary.Data.Entities;
-using RaLibrary.Data.Exceptions;
+﻿using RaLibrary.Data.Exceptions;
 using RaLibrary.Data.Managers;
 using RaLibrary.Data.Models;
 using RaLibrary.Filters;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -55,6 +55,10 @@ namespace RaLibrary.Controllers
         public IQueryable<BookDto> ListBorrowedBooks()
         {
             string email = ClaimEmail;
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return new List<BookDto>().AsQueryable();
+            }
 
             return _books.List().Where(book => book.Borrower == email);
         }
@@ -74,6 +78,11 @@ namespace RaLibrary.Controllers
             }
 
             string email = ClaimEmail;
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest("Cannot identify you.");
+            }
+
             try
             {
                 await _books.UpdateBorrowerAsync(bookDto);
@@ -84,6 +93,8 @@ namespace RaLibrary.Controllers
                     Borrower = email
                 };
                 await _logs.CreateAsync(borrowLogDto);
+
+                return StatusCode(HttpStatusCode.NoContent);
             }
             catch (DbRecordNotFoundException)
             {
@@ -97,8 +108,6 @@ namespace RaLibrary.Controllers
             {
                 return InternalServerError();
             }
-
-            return StatusCode(HttpStatusCode.NoContent);
         }
 
         /// <summary>
@@ -111,6 +120,10 @@ namespace RaLibrary.Controllers
         public async Task<IHttpActionResult> ReturnBook(int id)
         {
             string email = ClaimEmail;
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest("Cannot identify you.");
+            }
 
             BookDto bookDto;
             try
@@ -149,6 +162,8 @@ namespace RaLibrary.Controllers
             try
             {
                 await _logs.UpdateAsync(logDto);
+
+                return StatusCode(HttpStatusCode.NoContent);
             }
             catch (DbRecordNotFoundException)
             {
@@ -162,8 +177,6 @@ namespace RaLibrary.Controllers
             {
                 return InternalServerError();
             }
-
-            return StatusCode(HttpStatusCode.NoContent);
         }
 
         protected override void Dispose(bool disposing)

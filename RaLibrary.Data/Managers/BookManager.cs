@@ -39,7 +39,7 @@ namespace RaLibrary.Data.Managers
             return ToDto(book);
         }
 
-        public async Task UpdateAsync(BookDto bookDto)
+        public async Task<BookDto> UpdateAsync(BookDto bookDto)
         {
             Book book = await FindAsync(bookDto.Id);
 
@@ -65,14 +65,15 @@ namespace RaLibrary.Data.Managers
             dbEntry.State = EntityState.Modified;
 
             await SaveChangesAsync();
+
+            return await GetAsync(book.Id);
         }
 
-        public async Task UpdateBorrowerAsync(BookDto bookDto)
+        public async Task<BookDto> UpdateBorrowerAsync(BookDto bookDto)
         {
             Book book = await FindAsync(bookDto.Id);
 
             book.Borrower = bookDto.Borrower;
-            book.RowVersion = bookDto.RowVersion;
 
             DbEntityEntry<Book> dbEntry = _db.Entry(book);
 
@@ -83,6 +84,8 @@ namespace RaLibrary.Data.Managers
             dbEntry.State = EntityState.Modified;
 
             await SaveChangesAsync();
+
+            return await GetAsync(book.Id);
         }
 
         public async Task<BookDto> CreateAsync(BookDto bookDto)

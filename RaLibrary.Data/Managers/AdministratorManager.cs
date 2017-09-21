@@ -1,9 +1,5 @@
 ﻿using RaLibrary.Data.Context;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RaLibrary.Data.Managers
 {
@@ -13,6 +9,11 @@ namespace RaLibrary.Data.Managers
 
         public bool AdministratorExists(string email)
         {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return false;
+            }
+
             return _db.Administrators.Count(admin => admin.Email == email) > 0;
         }
 
