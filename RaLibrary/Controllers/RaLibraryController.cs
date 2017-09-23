@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using RaLibrary.Filters;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Web.Http;
@@ -12,7 +13,13 @@ namespace RaLibrary.Controllers
             get
             {
                 ClaimsIdentity identity = User.Identity as ClaimsIdentity;
-                Claim claim = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+                if (identity == null)
+                {
+                    return null;
+                }
+
+                Claim claim = identity.Claims.FirstOrDefault(
+                    c => c.Type == ClaimTypes.Email);
 
                 if (claim != null)
                 {
@@ -30,7 +37,13 @@ namespace RaLibrary.Controllers
             get
             {
                 ClaimsIdentity identity = User.Identity as ClaimsIdentity;
-                Claim claim = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+                if (identity == null)
+                {
+                    return null;
+                }
+
+                Claim claim = identity.Claims.FirstOrDefault(
+                    c => c.Type == ClaimTypes.Name);
 
                 if (claim != null)
                 {
@@ -48,8 +61,13 @@ namespace RaLibrary.Controllers
             get
             {
                 ClaimsIdentity identity = User.Identity as ClaimsIdentity;
+                if (identity == null)
+                {
+                    return null;
+                }
+
                 List<string> roles = identity.Claims
-                    .Where(c => c.Type == ClaimTypes.Actor)
+                    .Where(c => c.Type == ClaimTypes.Role)
                     .Select(c => c.Value)
                     .ToList();
 
@@ -61,6 +79,14 @@ namespace RaLibrary.Controllers
                 {
                     return null;
                 }
+            }
+        }
+
+        public virtual bool IsAdministrator
+        {
+            get
+            {
+                return User.IsInRole(RoleTypes.Administrators);
             }
         }
     }

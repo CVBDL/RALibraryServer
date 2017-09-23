@@ -15,6 +15,7 @@ namespace RaLibrary.Controllers
     /// Books routes.
     /// </summary>
     [RoutePrefix("api/books")]
+    [RaAuthentication]
     public class BooksController : RaLibraryController
     {
         #region Fields
@@ -29,9 +30,16 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("")]
         [HttpGet]
-        public IQueryable<BookDto> ListBooks()
+        [ResponseType(typeof(IQueryable<BookDto>))]
+        public IHttpActionResult ListBooks([FromUri] string email = null)
         {
-            return _books.List();
+            // require administrator
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                return ListBooksOfUser(email);
+            }
+
+            return Ok(_books.List());
         }
 
         /// <summary>
@@ -64,8 +72,7 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("{id:int}")]
         [HttpPost]
-        //[RaAuthentication]
-        //[RaLibraryAuthorize(Roles = RoleTypes.Administrators)]
+        [RaLibraryAuthorize(Roles = RoleTypes.Administrators)]
         [ResponseType(typeof(BookDto))]
         public async Task<IHttpActionResult> UpdateBook(int id, BookDto bookDto)
         {
@@ -106,7 +113,6 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("")]
         [HttpPost]
-        [RaAuthentication]
         [RaLibraryAuthorize(Roles = RoleTypes.Administrators)]
         [ResponseType(typeof(Book))]
         public async Task<IHttpActionResult> CreateBook(BookDto bookDto)
@@ -143,7 +149,6 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("{id:int}")]
         [HttpDelete]
-        [RaAuthentication]
         [RaLibraryAuthorize(Roles = RoleTypes.Administrators)]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> DeleteBook(int id)
@@ -176,6 +181,18 @@ namespace RaLibrary.Controllers
             }
 
             base.Dispose(disposing);
+        }
+
+        private IHttpActionResult ListBooksOfUser(string email)
+        {
+            if (IsAdministrator)
+            {
+                return Ok(_books.List(email));
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
     }
 }
