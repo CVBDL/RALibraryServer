@@ -15,6 +15,7 @@ namespace RaLibrary.Data.Context
         public RaLibraryContext() : base("name=RaLibraryContext") { }
 
         public DbSet<Book> Books { get; set; }
+        public DbSet<Borrow> Borrows { get; set; }
         public DbSet<BorrowLog> BorrowLogs { get; set; }
         public DbSet<Administrator> Administrators { get; set; }
     }

@@ -11,7 +11,6 @@ namespace RaLibrary.Data.Managers
         Task DeleteAsync(int id);
         Task<BookDto> GetAsync(int id);
         IQueryable<BookDto> List();
-        IQueryable<BookDto> List(string borrowerEmail);
         Task<BookDto> UpdateAsync(BookDto bookDto);
     }
 }

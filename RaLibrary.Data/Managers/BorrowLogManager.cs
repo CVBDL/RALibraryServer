@@ -27,8 +27,7 @@ namespace RaLibrary.Data.Managers
         /// <returns></returns>
         public IQueryable<BorrowLogDto> List()
         {
-            List<BorrowLogDto> result = new List<BorrowLogDto>();
-
+            var result = new List<BorrowLogDto>();
             foreach (BorrowLog borrowLog in _db.BorrowLogs)
             {
                 result.Add(ToDto(borrowLog));
@@ -50,64 +49,19 @@ namespace RaLibrary.Data.Managers
         }
 
         /// <summary>
-        /// Get a log that the associated book is not returned.
-        /// </summary>
-        /// <param name="bookId">The book id.</param>
-        /// <returns></returns>
-        public BorrowLogDto GetActive(int bookId)
-        {
-            IQueryable<BorrowLog> logs = _db.BorrowLogs.Where(log => log.F_BookID == bookId && log.ReturnTime == null);
-
-            int count = logs.Count();
-            if (count == 0)
-            {
-                throw new DbRecordNotFoundException();
-            }
-            else if (count > 1)
-            {
-                throw new DbOperationException("Multiple logs exist.");
-            }
-            else
-            {
-                return ToDto(logs.First());
-            }
-        }
-
-        /// <summary>
-        /// Fill "ReturnTime" into an existing log, then the log will be "closed".
-        /// </summary>
-        /// <param name="logDto"></param>
-        /// <returns></returns>
-        public async Task CloseAsync(BorrowLogDto logDto)
-        {
-            BorrowLog borrowLog = await FindAsync(logDto.Id);
-
-            borrowLog.ReturnTime = DateTime.UtcNow;
-
-            ModifyDbEntityEntry(borrowLog, logDto.RowVersion);
-
-            await SaveChangesAsync();
-        }
-
-        /// <summary>
         /// Create a borrow log.
         /// </summary>
         /// <param name="logDto"></param>
         /// <returns></returns>
         public async Task<BorrowLogDto> CreateAsync(BorrowLogDto logDto)
         {
-            int borrowedDays = int.Parse(ConfigurationManager.AppSettings.Get("MaxBookBorrowDays"));
-
-            DateTime borrowTime = DateTime.UtcNow;
-            DateTime expectedReturnTime = borrowTime.AddDays(borrowedDays);
-
             BorrowLog borrowLog = new BorrowLog()
             {
                 F_BookID = logDto.F_BookID,
                 Borrower = logDto.Borrower,
-                BorrowTime = borrowTime,
-                ExpectedReturnTime = expectedReturnTime,
-                ReturnTime = null
+                BorrowTime = logDto.BorrowTime,
+                ExpectedReturnTime = logDto.ExpectedReturnTime,
+                ReturnTime = DateTime.UtcNow
             };
 
             _db.BorrowLogs.Add(borrowLog);

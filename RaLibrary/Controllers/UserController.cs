@@ -1,4 +1,5 @@
-﻿using RaLibrary.Data.Exceptions;
+﻿using RaLibrary.Data.Entities;
+using RaLibrary.Data.Exceptions;
 using RaLibrary.Data.Managers;
 using RaLibrary.Data.Models;
 using RaLibrary.Filters;
@@ -23,6 +24,7 @@ namespace RaLibrary.Controllers
         #region Fields
 
         private IBookManager _books = new BookManager();
+        private IBorrowManager _borrows = new BorrowManager();
         private IBorrowLogManager _logs = new BorrowLogManager();
         private IAdministratorManager _administrators = new AdministratorManager();
 
@@ -52,25 +54,35 @@ namespace RaLibrary.Controllers
         /// </summary>
         [Route("books")]
         [HttpGet]
-        public IQueryable<BookDto> ListBorrowedBooks()
+        [ResponseType(typeof(IQueryable<BorrowDto>))]
+        public IHttpActionResult ListBorrowedBooks([FromUri] string borrower = null)
         {
-            string email = ClaimEmail;
-            if (string.IsNullOrWhiteSpace(email))
+            // require administrator
+            if (!string.IsNullOrWhiteSpace(borrower))
             {
-                return new List<BookDto>().AsQueryable();
+                return ListBooksOfUser(borrower);
             }
+            else
+            {
+                string email = ClaimEmail;
+                if (string.IsNullOrWhiteSpace(email))
+                {
+                    var result = new List<BorrowDto>().AsQueryable();
+                    return Ok(result);
+                }
 
-            return _books.List(email);
+                return Ok(_borrows.List(email));
+            }
         }
 
         /// <summary>
         /// Borrow a book for the authenticated user.
         /// </summary>
-        /// <param name="id">The borrowed book id.</param>
-        [Route("books/{id:int}")]
+        /// <param name="bookId">The borrowed book id.</param>
+        [Route("books/{bookId:int}")]
         [HttpPost]
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> BorrowBook(int id)
+        public async Task<IHttpActionResult> BorrowBook(int bookId)
         {
             if (!ModelState.IsValid)
             {
@@ -85,12 +97,12 @@ namespace RaLibrary.Controllers
 
             try
             {
-                BorrowLogDto borrowLogDto = new BorrowLogDto()
+                Borrow borrow = new Borrow()
                 {
-                    F_BookID = id,
+                    FK_Book_Id = bookId,
                     Borrower = email
                 };
-                await _logs.CreateAsync(borrowLogDto);
+                await _borrows.CreateAsync(borrow);
 
                 return StatusCode(HttpStatusCode.NoContent);
             }
@@ -112,10 +124,10 @@ namespace RaLibrary.Controllers
         /// Return a book for the authenticated user.
         /// </summary>
         /// <param name="id">The book's id.</param>
-        [Route("books/{id:int}")]
+        [Route("books/{bookId:int}")]
         [HttpDelete]
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> ReturnBook(int id)
+        public async Task<IHttpActionResult> ReturnBook(int bookId)
         {
             string email = ClaimEmail;
             if (string.IsNullOrWhiteSpace(email))
@@ -123,10 +135,10 @@ namespace RaLibrary.Controllers
                 return BadRequest("Cannot identify you.");
             }
 
-            BorrowLogDto logDto;
+            Borrow borrow;
             try
             {
-                logDto = _logs.GetActive(id);
+                borrow = _borrows.GetByBookId(bookId);
             }
             catch (DbRecordNotFoundException)
             {
@@ -137,14 +149,30 @@ namespace RaLibrary.Controllers
                 return BadRequest(e.Message);
             }
 
-            if (logDto.Borrower != email)
+            if (borrow.Borrower != email)
             {
                 return BadRequest("This books is borrowed by others.");
             }
 
             try
             {
-                await _logs.CloseAsync(logDto);
+                await _borrows.DeleteAsync(borrow.Id);
+            }
+            catch (DbOperationException e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            try
+            {
+                BorrowLogDto borrowLogDto = new BorrowLogDto()
+                {
+                    F_BookID = bookId,
+                    Borrower = email,
+                    BorrowTime = borrow.BorrowTime,
+                    ExpectedReturnTime = borrow.ExpectedReturnTime
+                };
+                await _logs.CreateAsync(borrowLogDto);
 
                 return StatusCode(HttpStatusCode.NoContent);
             }
@@ -167,11 +195,24 @@ namespace RaLibrary.Controllers
             if (disposing)
             {
                 _books.Dispose();
+                _borrows.Dispose();
                 _logs.Dispose();
                 _administrators.Dispose();
             }
 
             base.Dispose(disposing);
+        }
+
+        private IHttpActionResult ListBooksOfUser(string borrower)
+        {
+            if (IsAdministrator)
+            {
+                return Ok(_borrows.List(borrower));
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
     }
 }

@@ -26,34 +26,8 @@ namespace RaLibrary.Data.Managers
         /// <returns></returns>
         public IQueryable<BookDto> List()
         {
-            List<BookDto> result = new List<BookDto>();
-
+            var result = new List<BookDto>();
             foreach (Book book in _db.Books)
-            {
-                result.Add(ToDto(book));
-            }
-
-            return result.AsQueryable();
-        }
-
-        /// <summary>
-        /// List books of a specified borrower.
-        /// </summary>
-        /// <param name="borrowerEmail">Borrower email address.</param>
-        /// <returns></returns>
-        public IQueryable<BookDto> List(string borrowerEmail)
-        {
-            if (string.IsNullOrWhiteSpace(borrowerEmail))
-            {
-                return List();
-            }
-
-            IQueryable<Book> books = _db.BorrowLogs
-                .Where(r => r.Borrower == borrowerEmail && r.ReturnTime == null)
-                .Select(log => log.Book);
-
-            List<BookDto> result = new List<BookDto>();
-            foreach (Book book in books)
             {
                 result.Add(ToDto(book));
             }
@@ -205,8 +179,8 @@ namespace RaLibrary.Data.Managers
 
         private BookDto ToDto(Book book)
         {
-            bool isBorrowed = _db.BorrowLogs
-                .Count(r => r.F_BookID == book.Id && r.ReturnTime == null) > 0;
+            bool isBorrowed = _db.Borrows
+                .Count(b => b.FK_Book_Id == book.Id) > 0;
 
             return new BookDto()
             {

@@ -30,16 +30,9 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("")]
         [HttpGet]
-        [ResponseType(typeof(IQueryable<BookDto>))]
-        public IHttpActionResult ListBooks([FromUri] string email = null)
+        public IQueryable<BookDto> ListBooks()
         {
-            // require administrator
-            if (!string.IsNullOrWhiteSpace(email))
-            {
-                return ListBooksOfUser(email);
-            }
-
-            return Ok(_books.List());
+            return _books.List();
         }
 
         /// <summary>
@@ -88,9 +81,9 @@ namespace RaLibrary.Controllers
 
             try
             {
-                BookDto resultDto = await _books.UpdateAsync(bookDto);
+                BookDto result = await _books.UpdateAsync(bookDto);
 
-                return Ok(resultDto);
+                return Ok(result);
             }
             catch (DbRecordNotFoundException)
             {
@@ -124,9 +117,9 @@ namespace RaLibrary.Controllers
 
             try
             {
-                BookDto resultDto = await _books.CreateAsync(bookDto);
+                BookDto result = await _books.CreateAsync(bookDto);
 
-                return CreatedAtRoute("GetSingleBook", new { id = resultDto.Id }, resultDto);
+                return CreatedAtRoute("GetSingleBook", new { id = result.Id }, result);
             }
             catch (DbRecordNotFoundException)
             {
@@ -181,18 +174,6 @@ namespace RaLibrary.Controllers
             }
 
             base.Dispose(disposing);
-        }
-
-        private IHttpActionResult ListBooksOfUser(string email)
-        {
-            if (IsAdministrator)
-            {
-                return Ok(_books.List(email));
-            }
-            else
-            {
-                return Unauthorized();
-            }
         }
     }
 }
