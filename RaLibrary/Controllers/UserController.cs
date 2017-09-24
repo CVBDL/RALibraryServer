@@ -66,11 +66,11 @@ namespace RaLibrary.Controllers
         /// <summary>
         /// Borrow a book for the authenticated user.
         /// </summary>
-        /// <param name="book">The borrowed book.</param>
-        [Route("books")]
+        /// <param name="id">The borrowed book id.</param>
+        [Route("books/{id:int}")]
         [HttpPost]
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> BorrowBook(BookDto bookDto)
+        public async Task<IHttpActionResult> BorrowBook(int id)
         {
             if (!ModelState.IsValid)
             {
@@ -87,7 +87,7 @@ namespace RaLibrary.Controllers
             {
                 BorrowLogDto borrowLogDto = new BorrowLogDto()
                 {
-                    F_BookID = bookDto.Id,
+                    F_BookID = id,
                     Borrower = email
                 };
                 await _logs.CreateAsync(borrowLogDto);
