@@ -26,8 +26,10 @@ namespace RaLibrary.Data.Managers
         /// <returns></returns>
         public IQueryable<BookDto> List()
         {
+            List<Book> books = _db.Books.ToList();
+
             var result = new List<BookDto>();
-            foreach (Book book in _db.Books)
+            foreach (Book book in books)
             {
                 result.Add(ToDto(book));
             }

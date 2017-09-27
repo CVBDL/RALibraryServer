@@ -27,8 +27,10 @@ namespace RaLibrary.Data.Managers
         /// <returns></returns>
         public IQueryable<BorrowDto> List()
         {
+            List<Borrow> borrows = _db.Borrows.ToList();
+
             var result = new List<BorrowDto>();
-            foreach (Borrow borrow in _db.Borrows)
+            foreach (Borrow borrow in borrows)
             {
                 result.Add(ToDto(borrow));
             }
