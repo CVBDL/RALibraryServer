@@ -5,10 +5,12 @@ using RaLibrary.BookApiProxy.Models;
 using RaLibrary.Utilities;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Web.Http.Description;
 
 namespace RaLibrary.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     [RoutePrefix("api/book")]
     public class BooksApiController : ApiController
     {

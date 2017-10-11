@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Web.Http.Description;
 
 namespace RaLibrary.Controllers
@@ -16,6 +17,7 @@ namespace RaLibrary.Controllers
     /// User routes.
     /// <https://github.com/CVBDL/RALibraryDocs/blob/master/rest-api.md#users>
     /// </summary>
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     [RoutePrefix("api/user")]
     [RaAuthentication]
     [RaLibraryAuthorize(Roles = RoleTypes.NormalUsers)]

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Web.Http.Description;
 
 namespace RaLibrary.Controllers
@@ -14,6 +15,7 @@ namespace RaLibrary.Controllers
     /// <summary>
     /// Books routes.
     /// </summary>
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     [RoutePrefix("api/books")]
     [RaAuthentication]
     public class BooksController : RaLibraryController
