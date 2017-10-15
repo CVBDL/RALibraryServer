@@ -143,6 +143,44 @@ namespace RaLibrary.Data.Managers
             }
         }
 
+        public async Task<IQueryable<BookDto>> QueryAsync(IEnumerable<string> keywords)
+        {
+            return await Task.Run(() =>
+            {
+                var result = new List<BookDto>();
+                var books = _db.Books.ToList();
+                foreach (var keyword in keywords)
+                {
+                    books = Filter(books, keyword);
+                    //results.ForEach(i =>
+                    //{
+                    //    if (!books.Exists(e => e.ISBN10 == i.ISBN10) &&
+                    //        !books.Exists(e => e.ISBN13 == i.ISBN13))
+                    //    {
+                    //        books.Add(ToDto(i));
+                    //    }
+                    //});
+                }
+                books.ForEach(i => result.Add(ToDto(i)));
+                return result.AsQueryable();
+            });
+        }
+
+        private List<Book> Filter(List<Book> books, string keyword)
+        {
+            var re = books.Where(i =>
+                (!string.IsNullOrWhiteSpace(i.Code) && i.Code.ToLower().Contains(keyword)) ||
+                (!string.IsNullOrWhiteSpace(i.ISBN10) && i.ISBN10.ToLower().Contains(keyword)) ||
+                (!string.IsNullOrWhiteSpace(i.ISBN13) && i.ISBN13.ToLower().Contains(keyword)) ||
+                (!string.IsNullOrWhiteSpace(i.Title) && i.Title.ToLower().Contains(keyword)) ||
+                (!string.IsNullOrWhiteSpace(i.Subtitle) && i.Subtitle.ToLower().Contains(keyword)) ||
+                (!string.IsNullOrWhiteSpace(i.Authors) && i.Authors.ToLower().Contains(keyword)) ||
+                (!string.IsNullOrWhiteSpace(i.Publisher) && i.Publisher.ToLower().Contains(keyword)) ||
+                (!string.IsNullOrWhiteSpace(i.Description) && i.Description.ToLower().Contains(keyword))
+            ).ToList();
+            return re;
+        }
+
         private void ModifyDbEntityEntry(Book book)
         {
             _db.Entry(book).State = EntityState.Modified;

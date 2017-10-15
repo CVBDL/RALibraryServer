@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RaLibrary.Data.Entities
 {
@@ -9,6 +10,7 @@ namespace RaLibrary.Data.Entities
         public int Id { get; set; }
         [Required]
         [MaxLength(10)]
+        [Index(IsUnique = true)]
         public string Code { get; set; }
         [MaxLength(10), MinLength(10)]
         public string ISBN10 { get; set; }

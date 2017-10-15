@@ -1,5 +1,6 @@
 ﻿using RaLibrary.Data.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,5 +13,6 @@ namespace RaLibrary.Data.Managers
         Task<BookDto> GetAsync(int id);
         IQueryable<BookDto> List();
         Task<BookDto> UpdateAsync(BookDto bookDto);
+        Task<IQueryable<BookDto>> QueryAsync(IEnumerable<string> keywords);
     }
 }

@@ -3,6 +3,8 @@ using RaLibrary.Data.Exceptions;
 using RaLibrary.Data.Managers;
 using RaLibrary.Data.Models;
 using RaLibrary.Filters;
+using RaLibrary.Validations;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -23,6 +25,8 @@ namespace RaLibrary.Controllers
         #region Fields
 
         private IBookManager _books = new BookManager();
+
+        private BookValidation _validation = new BookValidation();
 
         #endregion Fields
 
@@ -71,6 +75,12 @@ namespace RaLibrary.Controllers
         [ResponseType(typeof(BookDto))]
         public async Task<IHttpActionResult> UpdateBook(int id, BookDto bookDto)
         {
+            var message = string.Empty;
+            if (!_validation.ValidateUpdate(bookDto, out message))
+            {
+                return BadRequest(message);
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -112,6 +122,12 @@ namespace RaLibrary.Controllers
         [ResponseType(typeof(Book))]
         public async Task<IHttpActionResult> CreateBook(BookDto bookDto)
         {
+            var message = string.Empty;
+            if (!_validation.ValidateCreate(bookDto, out message))
+            {
+                return BadRequest(message);
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -166,6 +182,23 @@ namespace RaLibrary.Controllers
             {
                 return InternalServerError();
             }
+        }
+
+        /// <summary>
+        /// Get a single book.
+        /// </summary>
+        /// <param name="id">The book's id.</param>
+        /// <returns></returns>
+        [Route("{keyword}", Name = "QueryBook")]
+        [HttpGet]
+        public async Task<List<BookDto>> QueryBooks(string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+                return null;
+
+            var keywords = keyword.ToLower().Split().ToList();
+            var result = await _books.QueryAsync(keywords);
+            return result.ToList();
         }
 
         protected override void Dispose(bool disposing)
