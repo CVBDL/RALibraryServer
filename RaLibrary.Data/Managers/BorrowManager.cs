@@ -44,8 +44,9 @@ namespace RaLibrary.Data.Managers
                 return List();
             }
 
-            IQueryable<Borrow> borrows = _db.Borrows
-                .Where(b => b.Borrower == borrower);
+            List<Borrow> borrows = _db.Borrows
+                .Where(b => b.Borrower == borrower)
+                .ToList();
 
             List<BorrowDto> result = new List<BorrowDto>();
             foreach (Borrow borrow in borrows)
