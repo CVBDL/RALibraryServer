@@ -38,6 +38,23 @@ namespace RaLibrary.Data.Managers
         }
 
         /// <summary>
+        /// List all books from data store.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IQueryable<BookDto>> ListAsync()
+        {
+            List<Book> books = await _db.Books.ToListAsync();
+
+            var result = new List<BookDto>();
+            foreach (Book book in books)
+            {
+                result.Add(ToDto(book));
+            }
+
+            return result.AsQueryable();
+        }
+
+        /// <summary>
         /// Get a single book from data store.
         /// </summary>
         /// <param name="id">The book id.</param>

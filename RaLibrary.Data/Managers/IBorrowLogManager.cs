@@ -9,6 +9,6 @@ namespace RaLibrary.Data.Managers
     {
         Task<BorrowLogDto> CreateAsync(BorrowLogDto logDto);
         Task<BorrowLogDto> GetAsync(int id);
-        IQueryable<BorrowLogDto> List();
+        Task<IQueryable<BorrowLogDto>> ListAsync();
     }
 }

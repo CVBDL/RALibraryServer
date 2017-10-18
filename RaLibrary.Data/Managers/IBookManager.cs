@@ -12,6 +12,7 @@ namespace RaLibrary.Data.Managers
         Task DeleteAsync(int id);
         Task<BookDto> GetAsync(int id);
         IQueryable<BookDto> List();
+        Task<IQueryable<BookDto>> ListAsync();
         Task<BookDto> UpdateAsync(BookDto bookDto);
         Task<IQueryable<BookDto>> QueryAsync(IEnumerable<string> keywords);
     }

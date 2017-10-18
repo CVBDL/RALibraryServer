@@ -13,7 +13,7 @@ namespace RaLibrary.Data.Managers
         Task DeleteByBookIdAsync(int bookId);
         Task<Borrow> GetAsync(int id);
         Borrow GetByBookId(int id);
-        IQueryable<BorrowDto> List();
-        IQueryable<BorrowDto> List(string borrower);
+        Task<IQueryable<BorrowDto>> ListAsync();
+        Task<IQueryable<BorrowDto>> ListAsync(string borrower);
     }
 }

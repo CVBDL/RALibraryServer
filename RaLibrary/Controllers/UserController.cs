@@ -57,12 +57,12 @@ namespace RaLibrary.Controllers
         [Route("books")]
         [HttpGet]
         [ResponseType(typeof(IQueryable<BorrowDto>))]
-        public IHttpActionResult ListBorrowedBooks([FromUri] string borrower = null)
+        public async Task<IHttpActionResult> ListBorrowedBooks([FromUri] string borrower = null)
         {
             // require administrator
             if (!string.IsNullOrWhiteSpace(borrower))
             {
-                return ListBooksOfUser(borrower);
+                return await ListBooksOfUser(borrower);
             }
             else
             {
@@ -73,7 +73,8 @@ namespace RaLibrary.Controllers
                     return Ok(result);
                 }
 
-                return Ok(_borrows.List(email));
+                IQueryable<BorrowDto> books = await _borrows.ListAsync(email);
+                return Ok(books);
             }
         }
 
@@ -205,11 +206,12 @@ namespace RaLibrary.Controllers
             base.Dispose(disposing);
         }
 
-        private IHttpActionResult ListBooksOfUser(string borrower)
+        private async Task<IHttpActionResult> ListBooksOfUser(string borrower)
         {
             if (IsAdministrator)
             {
-                return Ok(_borrows.List(borrower));
+                IQueryable<BorrowDto> borrows = await _borrows.ListAsync(borrower);
+                return Ok(borrows);
             }
             else
             {

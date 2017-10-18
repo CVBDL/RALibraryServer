@@ -5,6 +5,7 @@ using RaLibrary.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Linq;
@@ -24,9 +25,9 @@ namespace RaLibrary.Data.Managers
         /// List all borrows.
         /// </summary>
         /// <returns></returns>
-        public IQueryable<BorrowDto> List()
+        public async Task<IQueryable<BorrowDto>> ListAsync()
         {
-            List<Borrow> borrows = _db.Borrows.ToList();
+            List<Borrow> borrows = await _db.Borrows.ToListAsync();
 
             var result = new List<BorrowDto>();
             foreach (Borrow borrow in borrows)
@@ -37,16 +38,16 @@ namespace RaLibrary.Data.Managers
             return result.AsQueryable();
         }
 
-        public IQueryable<BorrowDto> List(string borrower)
+        public async Task<IQueryable<BorrowDto>> ListAsync(string borrower)
         {
             if (string.IsNullOrWhiteSpace(borrower))
             {
-                return List();
+                return await ListAsync();
             }
 
-            List<Borrow> borrows = _db.Borrows
+            List<Borrow> borrows = await _db.Borrows
                 .Where(b => b.Borrower == borrower)
-                .ToList();
+                .ToListAsync();
 
             List<BorrowDto> result = new List<BorrowDto>();
             foreach (Borrow borrow in borrows)

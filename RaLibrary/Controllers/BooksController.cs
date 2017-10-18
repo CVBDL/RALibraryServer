@@ -36,9 +36,11 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("")]
         [HttpGet]
-        public IQueryable<BookDto> ListBooks()
+        public async Task<IHttpActionResult> ListBooks()
         {
-            return _books.List();
+            IQueryable<BookDto> books = await _books.ListAsync();
+
+            return Ok(books);
         }
 
         /// <summary>

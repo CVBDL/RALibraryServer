@@ -25,9 +25,9 @@ namespace RaLibrary.Data.Managers
         /// List all logs from data store.
         /// </summary>
         /// <returns></returns>
-        public IQueryable<BorrowLogDto> List()
+        public async Task<IQueryable<BorrowLogDto>> ListAsync()
         {
-            List<BorrowLog> borrowLogs = _db.BorrowLogs.ToList();
+            List<BorrowLog> borrowLogs = await _db.BorrowLogs.ToListAsync();
 
             var result = new List<BorrowLogDto>();
             foreach (BorrowLog borrowLog in borrowLogs)
