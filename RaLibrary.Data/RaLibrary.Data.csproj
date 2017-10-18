@@ -68,14 +68,6 @@
     <Compile Include="Managers\IBookManager.cs" />
     <Compile Include="Managers\IBorrowLogManager.cs" />
     <Compile Include="Managers\IBorrowManager.cs" />
-    <Compile Include="Migrations\201710121309142_Initial.cs" />
-    <Compile Include="Migrations\201710121309142_Initial.Designer.cs">
-      <DependentUpon>201710121309142_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710121335563_Initial2.cs" />
-    <Compile Include="Migrations\201710121335563_Initial2.Designer.cs">
-      <DependentUpon>201710121335563_Initial2.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BookDto.cs" />
     <Compile Include="Models\BorrowDto.cs" />
@@ -91,14 +83,6 @@
       <Project>{ab4c5c86-6324-4b3a-893f-b5dbee480e27}</Project>
       <Name>RaLibrary.Utilities</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201710121309142_Initial.resx">
-      <DependentUpon>201710121309142_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710121335563_Initial2.resx">
-      <DependentUpon>201710121335563_Initial2.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

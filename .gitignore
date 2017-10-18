@@ -4,9 +4,9 @@ obj/
 bin/
 packages/
 ralibrary.csproj.user
-ralibrary/App_Data/
-ralibrary/Migrations/*
 !ralibrary/Migrations/Configuration.cs
 RaLibrary/Properties/PublishProfiles/
 RaLibrary.Data.csproj.user
 RaLibrary.Utilities.csproj.user
+RaLibrary.Data/Migrations/**
+!RaLibrary.Data/Migrations/Configuration.cs
