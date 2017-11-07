@@ -35,7 +35,7 @@ namespace RaLibrary.BookApiProxy.Douban
             DoubanBook book = JsonConvert.DeserializeObject<DoubanBook>(responseBody);
 
             string authors = string.Empty;
-            if (!string.IsNullOrWhiteSpace(authors))
+            if (book.author!=null && book.author.Length > 0)
             {
                 authors = string.Join(",", book.author);
             }
