@@ -19,7 +19,7 @@ namespace RaLibrary.Data.Managers
                 return false;
             }
 
-            return _db.Administrators.Count(admin => admin.Email == email) > 0;
+            return _db.Administrators.Count(admin => admin.Email.ToLower() == email.ToLower()) > 0;
         }
 
         public void Dispose()
