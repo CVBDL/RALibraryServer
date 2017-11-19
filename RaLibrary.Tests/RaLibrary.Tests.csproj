@@ -56,10 +56,6 @@
     <Compile Include="Utils\IsbnTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ralibrary.Email\RaLibrary.Email.csproj">
-      <Project>{4c2ed55b-2c38-4303-8c71-42ba51d06c2d}</Project>
-      <Name>RaLibrary.Email</Name>
-    </ProjectReference>
     <ProjectReference Include="..\RaLibrary.Utilities\RaLibrary.Utilities.csproj">
       <Project>{ab4c5c86-6324-4b3a-893f-b5dbee480e27}</Project>
       <Name>RaLibrary.Utilities</Name>
