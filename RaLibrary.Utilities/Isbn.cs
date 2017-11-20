@@ -18,7 +18,7 @@
             _isbn = isbn;
 
 
-            if (IsValidIsbn(_isbn))
+            if (!IsValidIsbn(_isbn))
             {
                 throw new IsbnFormatException();
             }
@@ -72,7 +72,7 @@
 
         public static bool IsValidIsbn(string isbn)
         {
-            return IsValidIsbnTen(isbn) && IsValidIsbnThirteen(isbn);
+            return IsValidIsbnTen(isbn) || IsValidIsbnThirteen(isbn);
         }
 
         public static bool IsValidIsbnTen(string isbn)
