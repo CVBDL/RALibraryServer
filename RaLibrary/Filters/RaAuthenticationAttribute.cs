@@ -100,7 +100,7 @@ namespace RaLibrary.Filters
                 new Claim(ClaimTypes.Name, name),
                 new Claim(ClaimTypes.Email, email)
             };
-            
+
             if (administrators.IsAdministrator(email))
             {
                 claimCollection.Add(new Claim(ClaimTypes.Role, RoleTypes.Administrators));

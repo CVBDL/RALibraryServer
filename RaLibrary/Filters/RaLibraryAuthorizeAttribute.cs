@@ -8,6 +8,13 @@ namespace RaLibrary.Filters
     {
         protected override bool IsAuthorized(HttpActionContext actionContext)
         {
+            // Only authenticated user is necessary to check authorization.
+            if (!HttpContext.Current.User.Identity.IsAuthenticated)
+            {
+                return false;
+            }
+
+            // Default to checking if is "NormalUsers".
             if (string.IsNullOrWhiteSpace(Roles))
             {
                 return HttpContext.Current.User.IsInRole(RoleTypes.NormalUsers);
