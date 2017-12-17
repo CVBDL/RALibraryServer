@@ -1,7 +1,10 @@
 ﻿using RaLibrary.Data.Context;
+using RaLibrary.Data.Entities;
+using System.Data.Entity;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace RaLibrary.Data.Managers
 {
@@ -13,15 +16,16 @@ namespace RaLibrary.Data.Managers
 
         #endregion Fields
 
-        public bool IsValidServiceAccount(string username, string password)
+        public async Task<bool> IsValidServiceAccount(string username, string password)
         {
             string md5Passowrd = GetMd5Hash(password);
 
-            return _db.ServiceAccounts.Count(
-                account =>
-                    account.Username == username
-                    && account.Password == md5Passowrd
-                ) > 0;
+            var account = await _db.ServiceAccounts
+                .Where(sa => sa.Username == username
+                             && sa.Password == md5Passowrd)
+                .FirstOrDefaultAsync();
+
+            return (account != null);
         }
 
         public void Dispose()

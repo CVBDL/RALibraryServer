@@ -19,7 +19,7 @@ namespace RaLibrary.Filters
         private static readonly string Scheme = "Basic";
 
         private string realm = "ralibrary_resources";
-        private ServiceAccountManager serviceAccounts = new ServiceAccountManager();
+        private ServiceAccountManager accounts = new ServiceAccountManager();
 
         public string Realm
         {
@@ -79,7 +79,7 @@ namespace RaLibrary.Filters
             string username = usernameAndPasword.Item1;
             string password = usernameAndPasword.Item2;
 
-            if (!IdentifyAsync(username, password))
+            if (!await accounts.IsValidServiceAccount(username, password))
             {
                 // Authentication was attempted but failed. Set ErrorResult to indicate an error.
                 context.ErrorResult = new AuthenticationFailureResult(request);
@@ -169,11 +169,6 @@ namespace RaLibrary.Filters
             string userName = decodedCredentials.Substring(0, colonIndex);
             string password = decodedCredentials.Substring(colonIndex + 1);
             return new Tuple<string, string>(userName, password);
-        }
-
-        private bool IdentifyAsync(string username, string password)
-        {
-            return serviceAccounts.IsValidServiceAccount(username, password);
         }
     }
 }
