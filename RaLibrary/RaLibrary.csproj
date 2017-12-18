@@ -93,6 +93,7 @@
     <Compile Include="Controllers\BooksController.cs" />
     <Compile Include="Controllers\BorrowsController.cs" />
     <Compile Include="Controllers\RaLibraryController.cs" />
+    <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Filters\RaAuthenticationAttribute.cs" />
     <Compile Include="Filters\RaLibraryAuthenticationAttribute.cs" />
