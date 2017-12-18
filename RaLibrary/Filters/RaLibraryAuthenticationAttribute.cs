@@ -1,27 +1,25 @@
-﻿using RaLibrary.Data.Managers;
-using RaLibrary.Filters.Results;
-using RaLibrary.Utilities;
+﻿using RaLibrary.Filters.Results;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Net;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http.Filters;
-
+using RaLibrary.Data.Managers;
 
 namespace RaLibrary.Filters
 {
-    public class RaAuthenticationAttribute : Attribute, IAuthenticationFilter
+    public class RaLibraryAuthenticationAttribute : Attribute, IAuthenticationFilter
     {
-        private static readonly string Scheme = "Bearer";
-        private static readonly HttpClient httpClient = new HttpClient();
+        private static readonly string Scheme = "Basic";
 
-        private IAdministratorManager administrators = new AdministratorManager();
         private string realm = "ralibrary_resources";
+        private ServiceAccountManager accounts = new ServiceAccountManager();
 
         public string Realm
         {
@@ -40,7 +38,8 @@ namespace RaLibrary.Filters
 
         public bool AllowMultiple
         {
-            get {
+            get
+            {
                 return false;
             }
         }
@@ -71,33 +70,16 @@ namespace RaLibrary.Filters
                 return;
             }
 
-            // Post token to Authentication Server of RA
-            string tokenValidationEndpoint = ConfigurationManager.AppSettings.Get("TokenValidationEndpoint");
-            Dictionary<string, string> values = new Dictionary<string, string>
-                {
-                   { "IdToken", authorization.Parameter },
-                };
-            FormUrlEncodedContent content = new FormUrlEncodedContent(values);
-            HttpResponseMessage response = await httpClient.PostAsync(tokenValidationEndpoint, content);
-
-            string email = string.Empty;
-            string name = string.Empty;
-            if (response.StatusCode == HttpStatusCode.NoContent) // succeeded
+            Tuple<string, string> usernameAndPasword = ExtractUsernameAndPassword(authorization.Parameter);
+            if (usernameAndPasword == null)
             {
-                Jwt jwtInfo = Jwt.GetJwtFromRequestHeader(request);
-                if (jwtInfo != null)
-                {
-                    JwtPayload jwtPayload = jwtInfo.Payload;
-
-                    if (jwtPayload != null)
-                    {
-                        email = jwtPayload.Email;
-                        name = jwtPayload.Name;
-                    }
-                }
+                context.ErrorResult = new AuthenticationFailureResult(request);
             }
 
-            if (string.IsNullOrWhiteSpace(email))
+            string username = usernameAndPasword.Item1;
+            string password = usernameAndPasword.Item2;
+
+            if (!await accounts.IsValidServiceAccount(username, password))
             {
                 // Authentication was attempted but failed. Set ErrorResult to indicate an error.
                 context.ErrorResult = new AuthenticationFailureResult(request);
@@ -106,26 +88,18 @@ namespace RaLibrary.Filters
 
             IList<Claim> claimCollection = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, name),
-                new Claim(ClaimTypes.Email, email)
+                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.Role, RoleTypes.ServiceAccount)
             };
 
-            if (administrators.IsAdministrator(email))
-            {
-                claimCollection.Add(new Claim(ClaimTypes.Role, RoleTypes.Administrators));
-                claimCollection.Add(new Claim(ClaimTypes.Role, RoleTypes.NormalUsers));
-            }
-            else
-            {
-                claimCollection.Add(new Claim(ClaimTypes.Role, RoleTypes.NormalUsers));
-            }
+            var claimIdentity = new ClaimsIdentity(claimCollection, Scheme);
+            var principal = new ClaimsPrincipal(claimIdentity);
 
-            ClaimsIdentity claimIdentity = new ClaimsIdentity(claimCollection, Scheme);
-            ClaimsPrincipal principal = new ClaimsPrincipal(claimIdentity);
             if (principal == null)
             {
                 // Authentication was attempted but failed. Set ErrorResult to indicate an error.
                 context.ErrorResult = new AuthenticationFailureResult(request);
+                return;
             }
             else
             {
@@ -134,15 +108,9 @@ namespace RaLibrary.Filters
             }
         }
 
-        /// <summary>
-        /// Only add challenge to unauthorized requests.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
         public Task ChallengeAsync(HttpAuthenticationChallengeContext context, CancellationToken cancellationToken)
         {
-            var error = "invalid_token";
+            var error = "invalid_credential";
 
             // A correct implementation should verify that Realm does not contain a quote character unless properly
             // escaped (precededed by a backslash that is not itself escaped).
@@ -152,6 +120,55 @@ namespace RaLibrary.Filters
             context.Result = new AddChallengeOnUnauthorizedResult(challenge, context.Result);
 
             return Task.FromResult(0);
+        }
+
+        private static Tuple<string, string> ExtractUsernameAndPassword(string authorizationParameter)
+        {
+            byte[] credentialBytes;
+
+            try
+            {
+                credentialBytes = Convert.FromBase64String(authorizationParameter);
+            }
+            catch (FormatException)
+            {
+                return null;
+            }
+
+            // The currently approved HTTP 1.1 specification says characters here are ISO-8859-1.
+            // However, the current draft updated specification for HTTP 1.1 indicates this encoding is infrequently
+            // used in practice and defines behavior only for ASCII.
+            Encoding encoding = Encoding.ASCII;
+            // Make a writable copy of the encoding to enable setting a decoder fallback.
+            encoding = (Encoding)encoding.Clone();
+            // Fail on invalid bytes rather than silently replacing and continuing.
+            encoding.DecoderFallback = DecoderFallback.ExceptionFallback;
+            string decodedCredentials;
+
+            try
+            {
+                decodedCredentials = encoding.GetString(credentialBytes);
+            }
+            catch (DecoderFallbackException)
+            {
+                return null;
+            }
+
+            if (String.IsNullOrEmpty(decodedCredentials))
+            {
+                return null;
+            }
+
+            int colonIndex = decodedCredentials.IndexOf(':');
+
+            if (colonIndex == -1)
+            {
+                return null;
+            }
+
+            string userName = decodedCredentials.Substring(0, colonIndex);
+            string password = decodedCredentials.Substring(colonIndex + 1);
+            return new Tuple<string, string>(userName, password);
         }
     }
 }

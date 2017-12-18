@@ -18,5 +18,6 @@ namespace RaLibrary.Data.Context
         public DbSet<Borrow> Borrows { get; set; }
         public DbSet<BorrowLog> BorrowLogs { get; set; }
         public DbSet<Administrator> Administrators { get; set; }
+        public DbSet<ServiceAccount> ServiceAccounts { get; set; }
     }
 }

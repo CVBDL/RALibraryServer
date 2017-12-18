@@ -26,7 +26,16 @@ namespace RaLibrary.Migrations
             //      new Person { FullName = "Brice Lambson" },
             //      new Person { FullName = "Rowan Miller" }
             //    );
-            //
+
+            context.ServiceAccounts.AddOrUpdate(x => x.Id,
+                new ServiceAccount()
+                {
+                    Id = 1,
+                    Username = "cron",
+                    Password = "9d3bb895f22bf0afa958d68c2a58ded7"
+                }
+            );
+
             context.Books.AddOrUpdate(x => x.Id,
                 new Book()
                 {

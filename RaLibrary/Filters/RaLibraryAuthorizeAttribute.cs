@@ -21,7 +21,16 @@ namespace RaLibrary.Filters
             }
             else
             {
-                return HttpContext.Current.User.IsInRole(Roles);
+                bool isAuthorized = false;
+                string[] roleList = Roles.Split(',');
+                for (int i = 0; i < roleList.Length; i++)
+                {
+                    if (HttpContext.Current.User.IsInRole(roleList[i]))
+                    {
+                        isAuthorized = true;
+                    }
+                }
+                return isAuthorized;
             }
         }
 

@@ -58,6 +58,7 @@
     <Compile Include="Entities\Book.cs" />
     <Compile Include="Entities\Borrow.cs" />
     <Compile Include="Entities\BorrowLog.cs" />
+    <Compile Include="Entities\ServiceAccount.cs" />
     <Compile Include="Exceptions\DbOperationException.cs" />
     <Compile Include="Exceptions\DbRecordNotFoundException.cs" />
     <Compile Include="Managers\IReportManager.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Managers\IBorrowLogManager.cs" />
     <Compile Include="Managers\IBorrowManager.cs" />
     <Compile Include="Managers\ReportManager.cs" />
+    <Compile Include="Managers\ServiceAccountManager.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BookDto.cs" />
     <Compile Include="Models\BorrowDto.cs" />
