@@ -169,14 +169,6 @@ namespace RaLibrary.Data.Managers
                 foreach (var keyword in keywords)
                 {
                     books = Filter(books, keyword);
-                    //results.ForEach(i =>
-                    //{
-                    //    if (!books.Exists(e => e.ISBN10 == i.ISBN10) &&
-                    //        !books.Exists(e => e.ISBN13 == i.ISBN13))
-                    //    {
-                    //        books.Add(ToDto(i));
-                    //    }
-                    //});
                 }
                 books.ForEach(i => result.Add(ToDto(i)));
                 return result.AsQueryable();
