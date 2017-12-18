@@ -27,15 +27,21 @@ namespace RaLibrary.Controllers
         /// <returns></returns>
         [Route("books/{type}")]
         [HttpGet]
-        public HttpResponseMessage GetBooksRepor(string type)
+        public HttpResponseMessage GetBooksReport(string type)
         {
             var dtos = _reportManager.GetAllBooksStatusReport() as List<BookStateDto>;
-            var fileName = "BookStatusReport_" + DateTime.Now.ToString("yyyyMMdd") + ".xlsx";
+            var fileName = "BookStatusReport_" + DateTime.Now.ToString("yyyyMMdd");
             byte[] buffer = null;
             switch (type)
             {
-                case "csv": buffer = GetCsvFileContent(fileName, dtos); break;
-                case "excel": buffer = GetExcelFileContent(fileName, dtos); break;
+                case "csv":
+                    fileName += ".csv";
+                    buffer = GetCsvFileContent(fileName, dtos);
+                    break;
+                case "excel":
+                    fileName += ".xlsx";
+                    buffer = GetExcelFileContent(fileName, dtos);
+                    break;
             }
             var fileContent = new ByteArrayContent(buffer);
             fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
@@ -51,11 +57,9 @@ namespace RaLibrary.Controllers
 
         private byte[] GetCsvFileContent(string fileName, List<BookStateDto> dtos)
         {
-            // Issue: Chinese characters in CSV will display not correctly by EXCEL.EXE. It shoule conver from UTF-8 to ASCII charset.
             if (dtos == null)
                 return null;
 
-            var fullName = fileName + ".csv";
             var builder = new StringBuilder();
             // add head
             builder.AppendLine("Bar Code,Book Name,Book Status,Borrower,Borrowed Date,Expected Returning Date");
@@ -65,7 +69,9 @@ namespace RaLibrary.Controllers
                 builder.AppendLine($"{dto.Code},{dto.Name},{dto.Status},{dto.Borrower},{dto.BorrowedDate},{dto.ExpectedReturnDate}");
             }
             var content = builder.ToString();
-            return Encoding.UTF8.GetBytes(content);
+            // can't use UTF-8 or ASCII charset for the content, otherwise the EXCEL will not correctly parse the content and chinese
+            // character will display wrong format.
+            return Encoding.Default.GetBytes(content);
         }
 
         private byte[] GetExcelFileContent(string fileName, List<BookStateDto> dtos)
@@ -73,7 +79,6 @@ namespace RaLibrary.Controllers
             if (dtos == null)
                 return null;
 
-            var fullName = fileName + ".xlsx";
             var header = new string[] { "Bar Code", "Book Name", "Book Status", "Borrower", "Borrowed Date", "Expected Returning Date" };
             var excel = new ExcelFile();
             excel.Create();
