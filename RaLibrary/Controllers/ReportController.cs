@@ -29,10 +29,13 @@ namespace RaLibrary.Controllers
         [HttpGet]
         public HttpResponseMessage GetBooksReport(string type)
         {
+            if(string.IsNullOrWhiteSpace(type))
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+
             var dtos = _reportManager.GetAllBooksStatusReport() as List<BookStateDto>;
             var fileName = "BookStatusReport_" + DateTime.Now.ToString("yyyyMMdd");
             byte[] buffer = null;
-            switch (type)
+            switch (type.ToLower())
             {
                 case "csv":
                     fileName += ".csv";
@@ -42,6 +45,8 @@ namespace RaLibrary.Controllers
                     fileName += ".xlsx";
                     buffer = GetExcelFileContent(fileName, dtos);
                     break;
+                default:
+                    return new HttpResponseMessage(HttpStatusCode.BadRequest);
             }
             var fileContent = new ByteArrayContent(buffer);
             fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
@@ -87,7 +92,7 @@ namespace RaLibrary.Controllers
             {
                 sheet.WriteCell(0, i, header[i]);
             }
-            for (var i =  0; i < dtos.Count; i++)
+            for (var i = 0; i < dtos.Count; i++)
             {
                 var row = i + 1;
                 var col = 0;
@@ -98,8 +103,16 @@ namespace RaLibrary.Controllers
                 sheet.WriteCell(row, col++, dtos[i].BorrowedDate);
                 sheet.WriteCell(row, col++, dtos[i].ExpectedReturnDate);
             }
-            // TODO: find a temp file folder.
-            var path = @"d:\" + fileName;
+
+            var path = string.Empty;
+            try
+            {
+                path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + fileName;
+            }
+            catch (Exception)
+            {
+                path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\" + fileName;
+            }
             excel.SaveAs(path);
             excel.Close();
             var buffer = File.ReadAllBytes(path);
