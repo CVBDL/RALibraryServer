@@ -5,6 +5,7 @@ using RaLibrary.Utilities.Excel;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -29,7 +30,7 @@ namespace RaLibrary.Controllers
         [HttpGet]
         public HttpResponseMessage GetBooksReport(string type)
         {
-            if(string.IsNullOrWhiteSpace(type))
+            if (string.IsNullOrWhiteSpace(type))
                 return new HttpResponseMessage(HttpStatusCode.BadRequest);
 
             var dtos = _reportManager.GetAllBooksStatusReport() as List<BookStateDto>;
@@ -74,9 +75,8 @@ namespace RaLibrary.Controllers
                 builder.AppendLine($"{dto.Code},{dto.Name},{dto.Status},{dto.Borrower},{dto.BorrowedDate},{dto.ExpectedReturnDate}");
             }
             var content = builder.ToString();
-            // can't use UTF-8 or ASCII charset for the content, otherwise the EXCEL will not correctly parse the content and chinese
-            // character will display wrong format.
-            return Encoding.Default.GetBytes(content);
+            var buffer =  Encoding.UTF8.GetBytes(content);
+            return Encoding.UTF8.GetPreamble().Concat(buffer).ToArray();
         }
 
         private byte[] GetExcelFileContent(string fileName, List<BookStateDto> dtos)
