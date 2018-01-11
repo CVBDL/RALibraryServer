@@ -44,7 +44,11 @@ namespace RaLibrary.Utilities.Excel
             if (workbook_.IsAlive)
             {
                 var book = (MsExcel.Workbook)workbook_.Target;
-                string StyleName = "Style_" + fontColor?.ToString() + fontSize?.ToString() + bgColor?.ToString();
+                var fColor = fontColor.HasValue ? fontColor.Value.ToString() : string.Empty;
+                var fSize = fontSize.HasValue ? fontSize.Value.ToString() : string.Empty;
+                var bColor = bgColor.HasValue ? bgColor.Value.ToString() : string.Empty;
+
+                string StyleName = "Style_" + fColor + fSize + bColor;
                 MsExcel.Style style;
                 try
                 {

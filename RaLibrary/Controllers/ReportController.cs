@@ -72,7 +72,8 @@ namespace RaLibrary.Controllers
             // add content
             foreach (var dto in dtos)
             {
-                builder.AppendLine($"{dto.Code},{dto.Name},{dto.Status},{dto.Borrower},{dto.BorrowedDate},{dto.ExpectedReturnDate}");
+                builder.AppendFormat("{0},{1},{2},{3},{4},{5}", dto.Code, dto.Name, dto.Status, dto.Borrower, dto.BorrowedDate, dto.ExpectedReturnDate);
+                builder.AppendLine();
             }
             var content = builder.ToString();
             var buffer =  Encoding.UTF8.GetBytes(content);
